@@ -32,6 +32,7 @@ async function main(): Promise<void> {
 
   if (options.mode === 'full') {
     await runStep('Generate AI test cases', ['tsx', 'src/ai/generateTestCases.ts'], env);
+    await runStep('Merge manual test cases', ['tsx', 'src/manual/mergeManualTestCases.ts'], env);
     await runStep('Generate Playwright specs', ['tsx', 'src/ai/generateSpec.ts'], env);
   }
 

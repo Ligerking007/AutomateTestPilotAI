@@ -5,6 +5,7 @@ async function main(): Promise<void> {
   await copyDirectoryIfExists(path.resolve('playwright-report'), path.resolve('public/playwright-report'));
   await copyFileIfExists(path.resolve('reports/ai-failure-analysis.md'), path.resolve('public/ai-failure-analysis.md'));
   await copyFileIfExists(path.resolve('reports/test-cases.json'), path.resolve('public/test-cases.json'));
+  await copyFileIfExists(path.resolve('reports/manual-test-cases.json'), path.resolve('public/manual-test-cases.json'));
   await writeTextFile(path.resolve('public/index.html'), buildIndexHtml());
 
   console.log('Built static report site in public/');
@@ -222,7 +223,7 @@ function buildIndexHtml(): string {
       }
       .report-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 14px;
       }
       .card {
@@ -420,6 +421,7 @@ function buildIndexHtml(): string {
           <div class="hero-actions">
             <a class="button" href="./playwright-report/index.html">Open Playwright Report</a>
             <a class="button secondary" href="./ai-failure-analysis.md">Read AI Analysis</a>
+            <a class="button secondary" href="./manual-test-cases.html">Create Manual Cases</a>
           </div>
         </div>
         <aside class="status-panel" aria-label="Latest run status">
@@ -473,6 +475,14 @@ function buildIndexHtml(): string {
             </div>
             <span class="card-cta">View JSON</span>
           </a>
+          <a class="card" href="./manual-test-cases.html">
+            <div>
+              <div class="card-kicker">Manual Input</div>
+              <strong class="card-title">Manual Test Case UI</strong>
+              <p>Create, import, export, and review manual cases before merging them into generated specs.</p>
+            </div>
+            <span class="card-cta">Create cases</span>
+          </a>
         </div>
       </section>
 
@@ -489,8 +499,8 @@ function buildIndexHtml(): string {
           </div>
           <div class="step">
             <div class="step-num">02</div>
-            <strong>AI Test Cases</strong>
-            <span>AI creates structured cases with steps, priority, and tags.</span>
+            <strong>AI or Manual Cases</strong>
+            <span>AI and manual input create structured cases with steps, priority, and tags.</span>
           </div>
           <div class="step">
             <div class="step-num">03</div>

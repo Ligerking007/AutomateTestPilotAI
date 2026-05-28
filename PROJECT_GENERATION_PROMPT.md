@@ -394,6 +394,7 @@ Create a professional README.md with:
     "ai:generate-cases": "tsx src/ai/generateTestCases.ts",
     "ai:generate-specs": "tsx src/ai/generateSpec.ts",
     "ai:analyze-failure": "tsx src/ai/analyzeFailure.ts",
+    "manual:merge": "tsx src/manual/mergeManualTestCases.ts",
     "report:site": "tsx src/utils/buildReportSite.ts",
     "test:visual": "playwright test tests/visual",
     "check": "tsc --noEmit"

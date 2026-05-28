@@ -168,6 +168,33 @@ When no AI key is available, it falls back to a deterministic generator so the p
 
 The report includes Summary, Root Cause, Failed Step, Possible Fix, Affected File, Risk Level, and Recommended Next Action.
 
+## Manual Test Cases
+
+The report site includes a manual test case UI:
+
+```text
+public/manual-test-cases.html
+```
+
+Use it to create, edit, import, and export manual test cases without editing JSON by hand. Exported cases should be saved to:
+
+```text
+reports/manual-test-cases.json
+```
+
+Merge manual cases into the generated test case file:
+
+```bash
+npm run manual:merge
+npm run ai:generate-specs
+```
+
+The full project runner also merges manual cases automatically before generating specs:
+
+```bash
+npm run test:project -- portfolio
+```
+
 Other useful commands:
 
 ```bash
