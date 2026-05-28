@@ -20,13 +20,19 @@ function buildIndexHtml(): string {
     <style>
       :root {
         color-scheme: light;
-        --bg: #f7f8fb;
-        --text: #111827;
-        --muted: #5b6472;
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --surface-alt: #eef4f2;
+        --text: #101418;
+        --muted: #5a6573;
         --panel: #ffffff;
-        --line: #d9dee8;
+        --line: #d7dde5;
+        --line-strong: #b8c2cc;
         --accent: #0f766e;
-        --accent-dark: #115e59;
+        --accent-strong: #115e59;
+        --blue: #1d4ed8;
+        --amber: #a16207;
+        --shadow: 0 14px 34px rgba(16, 20, 24, 0.08);
       }
       * { box-sizing: border-box; }
       body {
@@ -35,33 +41,196 @@ function buildIndexHtml(): string {
         background: var(--bg);
         color: var(--text);
       }
-      main {
-        width: min(980px, calc(100% - 32px));
+      a {
+        color: inherit;
+      }
+      .page {
+        width: min(1120px, calc(100% - 32px));
         margin: 0 auto;
-        padding: 56px 0;
+        padding: 28px 0 40px;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 0 24px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+      .mark {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--accent-strong);
+        font-weight: 800;
+      }
+      .brand-title {
+        font-size: 16px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+      .brand-subtitle {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .repo-link {
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--accent-strong);
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+        gap: 20px;
+        align-items: stretch;
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
       }
       h1 {
-        margin: 0 0 12px;
-        font-size: 44px;
-        line-height: 1.05;
+        max-width: 760px;
+        margin: 0;
+        font-size: 40px;
+        line-height: 1.1;
         letter-spacing: 0;
       }
       p {
         margin: 0;
         color: var(--muted);
-        font-size: 17px;
+        font-size: 16px;
         line-height: 1.6;
       }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 16px;
-        margin-top: 32px;
+      .lede {
+        max-width: 780px;
+        margin-top: 14px;
       }
-      a.card {
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 22px;
+      }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 0 14px;
+        border-radius: 8px;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 750;
+        text-decoration: none;
+      }
+      .button.secondary {
+        border-color: var(--line);
+        background: var(--surface);
+        color: var(--text);
+      }
+      .status-panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface-alt);
+        padding: 18px;
+      }
+      .status-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .status-value {
+        margin-top: 8px;
+        color: var(--accent-strong);
+        font-size: 26px;
+        font-weight: 850;
+        line-height: 1.15;
+      }
+      .status-detail {
+        margin-top: 8px;
+        font-size: 14px;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .metric {
+        min-height: 72px;
+        padding: 12px;
+        border: 1px solid rgba(15, 118, 110, 0.18);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .metric strong {
         display: block;
-        min-height: 150px;
-        padding: 20px;
+        font-size: 20px;
+        line-height: 1.1;
+      }
+      .metric span {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.3;
+      }
+      .section {
+        margin-top: 28px;
+      }
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+      h2 {
+        margin: 0;
+        font-size: 22px;
+        line-height: 1.2;
+        letter-spacing: 0;
+      }
+      .section-note {
+        max-width: 520px;
+        font-size: 14px;
+        text-align: right;
+      }
+      .report-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .card {
+        display: flex;
+        min-height: 188px;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 18px;
         border: 1px solid var(--line);
         border-radius: 8px;
         background: var(--panel);
@@ -70,46 +239,281 @@ function buildIndexHtml(): string {
       }
       a.card:hover {
         border-color: var(--accent);
-        box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+        box-shadow: var(--shadow);
       }
-      .card strong {
+      .card-kicker {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .card-title {
         display: block;
-        margin-bottom: 10px;
+        margin-top: 12px;
         font-size: 18px;
+        font-weight: 800;
+        line-height: 1.25;
       }
-      .meta {
-        margin-top: 32px;
-        padding-top: 20px;
-        border-top: 1px solid var(--line);
+      .card p {
+        margin-top: 10px;
         font-size: 14px;
       }
+      .card-cta {
+        margin-top: 18px;
+        color: var(--accent-strong);
+        font-size: 14px;
+        font-weight: 800;
+      }
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .step {
+        min-height: 120px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .step-num {
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 850;
+      }
+      .step strong {
+        display: block;
+        margin-top: 10px;
+        font-size: 15px;
+        line-height: 1.25;
+      }
+      .step span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .project-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .project {
+        min-height: 112px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .project strong {
+        display: block;
+        font-size: 16px;
+      }
+      .project span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 28px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+      }
       .repo {
-        color: var(--accent-dark);
+        color: var(--accent-strong);
         font-weight: 700;
+      }
+      @media (max-width: 860px) {
+        .hero,
+        .report-grid,
+        .pipeline,
+        .project-list {
+          grid-template-columns: 1fr;
+        }
+        .section-head {
+          display: block;
+        }
+        .section-note {
+          margin-top: 8px;
+          text-align: left;
+        }
+      }
+      @media (max-width: 620px) {
+        .page {
+          width: min(100% - 24px, 1120px);
+          padding-top: 16px;
+        }
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .repo-link {
+          width: 100%;
+        }
+        .hero {
+          padding: 20px;
+        }
+        h1 {
+          font-size: 31px;
+        }
+        .metrics {
+          grid-template-columns: 1fr;
+        }
+        .meta {
+          display: block;
+        }
+        .meta span {
+          display: block;
+          margin-top: 6px;
+          overflow-wrap: anywhere;
+        }
       }
     </style>
   </head>
   <body>
-    <main>
-      <h1>AutomateTestPilotAI</h1>
-      <p>AI-powered Playwright automation framework for generating test cases, creating specs, running cross-browser checks, analyzing failures, and publishing reports.</p>
+    <main class="page">
+      <header class="topbar" aria-label="Site header">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">TP</div>
+          <div>
+            <div class="brand-title">AutomateTestPilotAI</div>
+            <div class="brand-subtitle">AI-powered Playwright automation framework</div>
+          </div>
+        </div>
+        <a class="repo-link" href="https://github.com/Ligerking007/AutomateTestPilotAI">GitHub Repository</a>
+      </header>
 
-      <section class="grid" aria-label="Report links">
-        <a class="card" href="./playwright-report/index.html">
-          <strong>Playwright HTML Report</strong>
-          <p>Cross-browser execution details with traces, screenshots, and videos on failure.</p>
-        </a>
-        <a class="card" href="./ai-failure-analysis.md">
-          <strong>AI Failure Analysis</strong>
-          <p>Root cause summary, affected file, risk level, and recommended next action.</p>
-        </a>
-        <a class="card" href="./test-cases.json">
-          <strong>Generated Test Cases</strong>
-          <p>Structured JSON test cases created from markdown requirements.</p>
-        </a>
+      <section class="hero" aria-label="Overview">
+        <div>
+          <h1>Automation reports for AI-generated Playwright testing</h1>
+          <p class="lede">A portfolio-ready test automation dashboard that connects requirements, generated test cases, Playwright execution, visual checks, and AI failure analysis in one deployable report site.</p>
+          <div class="hero-actions">
+            <a class="button" href="./playwright-report/index.html">Open Playwright Report</a>
+            <a class="button secondary" href="./ai-failure-analysis.md">Read AI Analysis</a>
+          </div>
+        </div>
+        <aside class="status-panel" aria-label="Latest run status">
+          <div class="status-label">Latest Run</div>
+          <div class="status-value">Ready for Review</div>
+          <p class="status-detail">Generated reports are available from the latest local or CI workflow run.</p>
+          <div class="metrics" aria-label="Report summary">
+            <div class="metric">
+              <strong>3</strong>
+              <span>Generated test cases</span>
+            </div>
+            <div class="metric">
+              <strong>3</strong>
+              <span>Browser engines configured</span>
+            </div>
+            <div class="metric">
+              <strong>AI</strong>
+              <span>Failure analysis enabled</span>
+            </div>
+          </div>
+        </aside>
       </section>
 
-      <p class="meta">Repository: <span class="repo">https://github.com/Ligerking007/AutomateTestPilotAI</span></p>
+      <section class="section" aria-label="Report links">
+        <div class="section-head">
+          <h2>Reports</h2>
+          <p class="section-note">Open the artifact you need for debugging, review, or interview walkthroughs.</p>
+        </div>
+        <div class="report-grid">
+          <a class="card" href="./playwright-report/index.html">
+            <div>
+              <div class="card-kicker">Execution</div>
+              <strong class="card-title">Playwright HTML Report</strong>
+              <p>Review browser runs, assertions, traces, screenshots, and videos captured on failure.</p>
+            </div>
+            <span class="card-cta">Open report</span>
+          </a>
+          <a class="card" href="./ai-failure-analysis.md">
+            <div>
+              <div class="card-kicker">Analysis</div>
+              <strong class="card-title">AI Failure Analysis</strong>
+              <p>Read the root cause summary, affected file, risk level, and recommended next action.</p>
+            </div>
+            <span class="card-cta">View analysis</span>
+          </a>
+          <a class="card" href="./test-cases.json">
+            <div>
+              <div class="card-kicker">Generation</div>
+              <strong class="card-title">Generated Test Cases</strong>
+              <p>Inspect structured JSON created from markdown requirements and used by the spec generator.</p>
+            </div>
+            <span class="card-cta">View JSON</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Automation pipeline">
+        <div class="section-head">
+          <h2>Automation Pipeline</h2>
+          <p class="section-note">The workflow turns product requirements into executable tests and reviewable reports.</p>
+        </div>
+        <div class="pipeline">
+          <div class="step">
+            <div class="step-num">01</div>
+            <strong>Requirements</strong>
+            <span>Markdown files describe expected product behavior.</span>
+          </div>
+          <div class="step">
+            <div class="step-num">02</div>
+            <strong>AI Test Cases</strong>
+            <span>AI creates structured cases with steps, priority, and tags.</span>
+          </div>
+          <div class="step">
+            <div class="step-num">03</div>
+            <strong>AI Specs</strong>
+            <span>Generated Playwright specs use assertions and stable locator guidance.</span>
+          </div>
+          <div class="step">
+            <div class="step-num">04</div>
+            <strong>Test Run</strong>
+            <span>Playwright runs browser checks and stores debug artifacts.</span>
+          </div>
+          <div class="step">
+            <div class="step-num">05</div>
+            <strong>AI Analysis</strong>
+            <span>Failures are summarized into actionable engineering notes.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Target projects">
+        <div class="section-head">
+          <h2>Target Projects</h2>
+          <p class="section-note">The same framework can run against multiple portfolio applications.</p>
+        </div>
+        <div class="project-list">
+          <div class="project">
+            <strong>DevPilotAI</strong>
+            <span>AI developer assistant application tested through configurable base URLs.</span>
+          </div>
+          <div class="project">
+            <strong>CodeReviewPilotAI</strong>
+            <span>AI code review workflow checks for smoke, navigation, and generated scenarios.</span>
+          </div>
+          <div class="project">
+            <strong>JakapanKPortfolio</strong>
+            <span>Public portfolio UI validated with smoke and visual regression-ready checks.</span>
+          </div>
+        </div>
+      </section>
+
+      <footer class="meta">
+        <span>Report site generated by <strong>AutomateTestPilotAI</strong></span>
+        <span>Repository: <span class="repo">github.com/Ligerking007/AutomateTestPilotAI</span></span>
+      </footer>
     </main>
   </body>
 </html>
