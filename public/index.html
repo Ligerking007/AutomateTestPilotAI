@@ -21,6 +21,22 @@
         --amber: #a16207;
         --shadow: 0 14px 34px rgba(16, 20, 24, 0.08);
       }
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #0f141b;
+        --surface: #151c25;
+        --surface-alt: #10231f;
+        --text: #f3f6f8;
+        --muted: #a7b1bd;
+        --panel: #151c25;
+        --line: #2c3745;
+        --line-strong: #3d4a5a;
+        --accent: #14b8a6;
+        --accent-strong: #5eead4;
+        --blue: #60a5fa;
+        --amber: #fbbf24;
+        --shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+      }
       * { box-sizing: border-box; }
       body {
         margin: 0;
@@ -83,6 +99,43 @@
         font-weight: 700;
         text-decoration: none;
         white-space: nowrap;
+      }
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .nav-links,
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .nav-link,
+      .nav-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 750;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .nav-link.active,
+      .nav-button.active {
+        border-color: rgba(15, 118, 110, 0.35);
+        background: var(--surface-alt);
+        color: var(--accent-strong);
       }
       .hero {
         display: grid;
@@ -364,7 +417,12 @@
           align-items: flex-start;
           flex-direction: column;
         }
-        .repo-link {
+        .site-nav,
+        .nav-links,
+        .nav-controls,
+        .repo-link,
+        .nav-link,
+        .nav-button {
           width: 100%;
         }
         .hero {
@@ -394,38 +452,49 @@
           <div class="mark" aria-hidden="true">TP</div>
           <div>
             <div class="brand-title">AutomateTestPilotAI</div>
-            <div class="brand-subtitle">AI-powered Playwright automation framework</div>
+            <div class="brand-subtitle" data-i18n="brandSubtitle">AI-powered Playwright automation framework</div>
           </div>
         </div>
-        <a class="repo-link" href="https://github.com/Ligerking007/AutomateTestPilotAI">GitHub Repository</a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <div class="nav-links">
+            <a class="nav-link active" href="./index.html" data-i18n="navDashboard">Dashboard</a>
+            <a class="nav-link" href="./manual-test-cases.html" data-i18n="navManual">Manual Cases</a>
+            <a class="nav-link" href="./playwright-report/index.html" data-i18n="navReport">Playwright Report</a>
+            <a class="repo-link" href="https://github.com/Ligerking007/AutomateTestPilotAI" data-i18n="navRepo">GitHub Repository</a>
+          </div>
+          <div class="nav-controls" aria-label="Display preferences">
+            <button class="nav-button" type="button" data-lang-toggle>TH</button>
+            <button class="nav-button" type="button" data-theme-toggle>Dark</button>
+          </div>
+        </nav>
       </header>
 
       <section class="hero" aria-label="Overview">
         <div>
-          <h1>Automation reports for AI-generated Playwright testing</h1>
-          <p class="lede">A portfolio-ready test automation dashboard that connects requirements, generated test cases, Playwright execution, visual checks, and AI failure analysis in one deployable report site.</p>
+          <h1 data-i18n="heroTitle">Automation reports for AI-generated Playwright testing</h1>
+          <p class="lede" data-i18n="heroText">A portfolio-ready test automation dashboard that connects requirements, generated test cases, Playwright execution, visual checks, and AI failure analysis in one deployable report site.</p>
           <div class="hero-actions">
-            <a class="button" href="./playwright-report/index.html">Open Playwright Report</a>
-            <a class="button secondary" href="./ai-failure-analysis.md">Read AI Analysis</a>
-            <a class="button secondary" href="./manual-test-cases.html">Create Manual Cases</a>
+            <a class="button" href="./playwright-report/index.html" data-i18n="openReport">Open Playwright Report</a>
+            <a class="button secondary" href="./ai-failure-analysis.md" data-i18n="readAnalysis">Read AI Analysis</a>
+            <a class="button secondary" href="./manual-test-cases.html" data-i18n="createManual">Create Manual Cases</a>
           </div>
         </div>
         <aside class="status-panel" aria-label="Latest run status">
-          <div class="status-label">Latest Run</div>
-          <div class="status-value">Ready for Review</div>
-          <p class="status-detail">Generated reports are available from the latest local or CI workflow run.</p>
+          <div class="status-label" data-i18n="latestRun">Latest Run</div>
+          <div class="status-value" data-i18n="readyReview">Ready for Review</div>
+          <p class="status-detail" data-i18n="statusDetail">Generated reports are available from the latest local or CI workflow run.</p>
           <div class="metrics" aria-label="Report summary">
             <div class="metric">
               <strong>3</strong>
-              <span>Generated test cases</span>
+              <span data-i18n="metricCases">Generated test cases</span>
             </div>
             <div class="metric">
               <strong>3</strong>
-              <span>Browser engines configured</span>
+              <span data-i18n="metricBrowsers">Browser engines configured</span>
             </div>
             <div class="metric">
               <strong>AI</strong>
-              <span>Failure analysis enabled</span>
+              <span data-i18n="metricAnalysis">Failure analysis enabled</span>
             </div>
           </div>
         </aside>
@@ -433,96 +502,96 @@
 
       <section class="section" aria-label="Report links">
         <div class="section-head">
-          <h2>Reports</h2>
-          <p class="section-note">Open the artifact you need for debugging, review, or interview walkthroughs.</p>
+          <h2 data-i18n="reportsTitle">Reports</h2>
+          <p class="section-note" data-i18n="reportsNote">Open the artifact you need for debugging, review, or interview walkthroughs.</p>
         </div>
         <div class="report-grid">
           <a class="card" href="./playwright-report/index.html">
             <div>
               <div class="card-kicker">Execution</div>
-              <strong class="card-title">Playwright HTML Report</strong>
-              <p>Review browser runs, assertions, traces, screenshots, and videos captured on failure.</p>
+              <strong class="card-title" data-i18n="playwrightReport">Playwright HTML Report</strong>
+              <p data-i18n="playwrightReportText">Review browser runs, assertions, traces, screenshots, and videos captured on failure.</p>
             </div>
-            <span class="card-cta">Open report</span>
+            <span class="card-cta" data-i18n="openReportShort">Open report</span>
           </a>
           <a class="card" href="./ai-failure-analysis.md">
             <div>
               <div class="card-kicker">Analysis</div>
-              <strong class="card-title">AI Failure Analysis</strong>
-              <p>Read the root cause summary, affected file, risk level, and recommended next action.</p>
+              <strong class="card-title" data-i18n="failureAnalysis">AI Failure Analysis</strong>
+              <p data-i18n="failureAnalysisText">Read the root cause summary, affected file, risk level, and recommended next action.</p>
             </div>
-            <span class="card-cta">View analysis</span>
+            <span class="card-cta" data-i18n="viewAnalysis">View analysis</span>
           </a>
           <a class="card" href="./test-cases.json">
             <div>
               <div class="card-kicker">Generation</div>
-              <strong class="card-title">Generated Test Cases</strong>
-              <p>Inspect structured JSON created from markdown requirements and used by the spec generator.</p>
+              <strong class="card-title" data-i18n="generatedCases">Generated Test Cases</strong>
+              <p data-i18n="generatedCasesText">Inspect structured JSON created from markdown requirements and used by the spec generator.</p>
             </div>
-            <span class="card-cta">View JSON</span>
+            <span class="card-cta" data-i18n="viewJson">View JSON</span>
           </a>
           <a class="card" href="./manual-test-cases.html">
             <div>
               <div class="card-kicker">Manual Input</div>
-              <strong class="card-title">Manual Test Case UI</strong>
-              <p>Create, import, export, and review manual cases before merging them into generated specs.</p>
+              <strong class="card-title" data-i18n="manualUi">Manual Test Case UI</strong>
+              <p data-i18n="manualUiText">Create, import, export, and review manual cases before merging them into generated specs.</p>
             </div>
-            <span class="card-cta">Create cases</span>
+            <span class="card-cta" data-i18n="createCases">Create cases</span>
           </a>
         </div>
       </section>
 
       <section class="section" aria-label="Automation pipeline">
         <div class="section-head">
-          <h2>Automation Pipeline</h2>
-          <p class="section-note">The workflow turns product requirements into executable tests and reviewable reports.</p>
+          <h2 data-i18n="pipelineTitle">Automation Pipeline</h2>
+          <p class="section-note" data-i18n="pipelineNote">The workflow turns product requirements into executable tests and reviewable reports.</p>
         </div>
         <div class="pipeline">
           <div class="step">
             <div class="step-num">01</div>
-            <strong>Requirements</strong>
-            <span>Markdown files describe expected product behavior.</span>
+            <strong data-i18n="stepRequirements">Requirements</strong>
+            <span data-i18n="stepRequirementsText">Markdown files describe expected product behavior.</span>
           </div>
           <div class="step">
             <div class="step-num">02</div>
-            <strong>AI or Manual Cases</strong>
-            <span>AI and manual input create structured cases with steps, priority, and tags.</span>
+            <strong data-i18n="stepCases">AI or Manual Cases</strong>
+            <span data-i18n="stepCasesText">AI and manual input create structured cases with steps, priority, and tags.</span>
           </div>
           <div class="step">
             <div class="step-num">03</div>
-            <strong>AI Specs</strong>
-            <span>Generated Playwright specs use assertions and stable locator guidance.</span>
+            <strong data-i18n="stepSpecs">AI Specs</strong>
+            <span data-i18n="stepSpecsText">Generated Playwright specs use assertions and stable locator guidance.</span>
           </div>
           <div class="step">
             <div class="step-num">04</div>
-            <strong>Test Run</strong>
-            <span>Playwright runs browser checks and stores debug artifacts.</span>
+            <strong data-i18n="stepRun">Test Run</strong>
+            <span data-i18n="stepRunText">Playwright runs browser checks and stores debug artifacts.</span>
           </div>
           <div class="step">
             <div class="step-num">05</div>
-            <strong>AI Analysis</strong>
-            <span>Failures are summarized into actionable engineering notes.</span>
+            <strong data-i18n="stepAnalysis">AI Analysis</strong>
+            <span data-i18n="stepAnalysisText">Failures are summarized into actionable engineering notes.</span>
           </div>
         </div>
       </section>
 
       <section class="section" aria-label="Target projects">
         <div class="section-head">
-          <h2>Target Projects</h2>
-          <p class="section-note">The same framework can run against multiple portfolio applications.</p>
+          <h2 data-i18n="targetProjects">Target Projects</h2>
+          <p class="section-note" data-i18n="targetProjectsText">The same framework can run against multiple portfolio applications.</p>
         </div>
         <div class="project-list">
           <div class="project">
             <strong>DevPilotAI</strong>
-            <span>AI developer assistant application tested through configurable base URLs.</span>
+            <span data-i18n="devpilotText">AI developer assistant application tested through configurable base URLs.</span>
           </div>
           <div class="project">
             <strong>CodeReviewPilotAI</strong>
-            <span>AI code review workflow checks for smoke, navigation, and generated scenarios.</span>
+            <span data-i18n="codereviewText">AI code review workflow checks for smoke, navigation, and generated scenarios.</span>
           </div>
           <div class="project">
             <strong>JakapanKPortfolio</strong>
-            <span>Public portfolio UI validated with smoke and visual regression-ready checks.</span>
+            <span data-i18n="portfolioText">Public portfolio UI validated with smoke and visual regression-ready checks.</span>
           </div>
         </div>
         <div class="command-list" aria-label="Project runner commands">
@@ -533,9 +602,145 @@
       </section>
 
       <footer class="meta">
-        <span>Report site generated by <strong>AutomateTestPilotAI</strong></span>
+        <span data-i18n="footerGenerated">Report site generated by AutomateTestPilotAI</span>
         <span>Repository: <span class="repo">github.com/Ligerking007/AutomateTestPilotAI</span></span>
       </footer>
     </main>
+    <script>
+      const messages = {
+        en: {
+          brandSubtitle: 'AI-powered Playwright automation framework',
+          navDashboard: 'Dashboard',
+          navManual: 'Manual Cases',
+          navReport: 'Playwright Report',
+          navRepo: 'GitHub Repository',
+          heroTitle: 'Automation reports for AI-generated Playwright testing',
+          heroText: 'A portfolio-ready test automation dashboard that connects requirements, generated test cases, Playwright execution, visual checks, and AI failure analysis in one deployable report site.',
+          openReport: 'Open Playwright Report',
+          readAnalysis: 'Read AI Analysis',
+          createManual: 'Create Manual Cases',
+          latestRun: 'Latest Run',
+          readyReview: 'Ready for Review',
+          statusDetail: 'Generated reports are available from the latest local or CI workflow run.',
+          metricCases: 'Generated test cases',
+          metricBrowsers: 'Browser engines configured',
+          metricAnalysis: 'Failure analysis enabled',
+          reportsTitle: 'Reports',
+          reportsNote: 'Open the artifact you need for debugging, review, or interview walkthroughs.',
+          playwrightReport: 'Playwright HTML Report',
+          playwrightReportText: 'Review browser runs, assertions, traces, screenshots, and videos captured on failure.',
+          openReportShort: 'Open report',
+          failureAnalysis: 'AI Failure Analysis',
+          failureAnalysisText: 'Read the root cause summary, affected file, risk level, and recommended next action.',
+          viewAnalysis: 'View analysis',
+          generatedCases: 'Generated Test Cases',
+          generatedCasesText: 'Inspect structured JSON created from markdown requirements and used by the spec generator.',
+          viewJson: 'View JSON',
+          manualUi: 'Manual Test Case UI',
+          manualUiText: 'Create, import, export, and review manual cases before merging them into generated specs.',
+          createCases: 'Create cases',
+          pipelineTitle: 'Automation Pipeline',
+          pipelineNote: 'The workflow turns product requirements into executable tests and reviewable reports.',
+          stepRequirements: 'Requirements',
+          stepRequirementsText: 'Markdown files describe expected product behavior.',
+          stepCases: 'AI or Manual Cases',
+          stepCasesText: 'AI and manual input create structured cases with steps, priority, and tags.',
+          stepSpecs: 'AI Specs',
+          stepSpecsText: 'Generated Playwright specs use assertions and stable locator guidance.',
+          stepRun: 'Test Run',
+          stepRunText: 'Playwright runs browser checks and stores debug artifacts.',
+          stepAnalysis: 'AI Analysis',
+          stepAnalysisText: 'Failures are summarized into actionable engineering notes.',
+          targetProjects: 'Target Projects',
+          targetProjectsText: 'The same framework can run against multiple portfolio applications.',
+          devpilotText: 'AI developer assistant application tested through configurable base URLs.',
+          codereviewText: 'AI code review workflow checks for smoke, navigation, and generated scenarios.',
+          portfolioText: 'Public portfolio UI validated with smoke and visual regression-ready checks.',
+          footerGenerated: 'Report site generated by AutomateTestPilotAI'
+        },
+        th: {
+          brandSubtitle: 'เฟรมเวิร์ก Playwright automation ที่ใช้ AI ช่วยทำงาน',
+          navDashboard: 'หน้าหลัก',
+          navManual: 'Manual Cases',
+          navReport: 'รายงาน Playwright',
+          navRepo: 'GitHub Repository',
+          heroTitle: 'แดชบอร์ดรายงานสำหรับ Playwright testing ที่ใช้ AI',
+          heroText: 'แดชบอร์ด automation สำหรับ portfolio ที่เชื่อม requirement, test cases, Playwright execution, visual checks และ AI failure analysis ไว้ในที่เดียว',
+          openReport: 'เปิด Playwright Report',
+          readAnalysis: 'อ่าน AI Analysis',
+          createManual: 'สร้าง Manual Cases',
+          latestRun: 'ผลรันล่าสุด',
+          readyReview: 'พร้อมตรวจสอบ',
+          statusDetail: 'รายงานถูกสร้างจาก local หรือ CI workflow ล่าสุด',
+          metricCases: 'Generated test cases',
+          metricBrowsers: 'Browser engines ที่ตั้งค่าไว้',
+          metricAnalysis: 'เปิดใช้ failure analysis',
+          reportsTitle: 'รายงาน',
+          reportsNote: 'เปิด artifact ที่ต้องใช้สำหรับ debug, review หรือ demo ตอนสัมภาษณ์',
+          playwrightReport: 'Playwright HTML Report',
+          playwrightReportText: 'ดูผลรัน browser, assertions, traces, screenshots และ videos เมื่อ test fail',
+          openReportShort: 'เปิดรายงาน',
+          failureAnalysis: 'AI Failure Analysis',
+          failureAnalysisText: 'อ่าน root cause, affected file, risk level และ recommended next action',
+          viewAnalysis: 'ดู analysis',
+          generatedCases: 'Generated Test Cases',
+          generatedCasesText: 'ดู JSON test cases ที่สร้างจาก markdown requirements และใช้ต่อกับ spec generator',
+          viewJson: 'ดู JSON',
+          manualUi: 'Manual Test Case UI',
+          manualUiText: 'สร้าง import export และตรวจ manual cases ก่อน merge เข้า generated specs',
+          createCases: 'สร้าง cases',
+          pipelineTitle: 'Automation Pipeline',
+          pipelineNote: 'Workflow เปลี่ยน product requirements ให้เป็น executable tests และ reviewable reports',
+          stepRequirements: 'Requirements',
+          stepRequirementsText: 'Markdown files อธิบายพฤติกรรมที่ระบบควรทำได้',
+          stepCases: 'AI หรือ Manual Cases',
+          stepCasesText: 'AI และ manual input สร้าง structured cases พร้อม steps, priority และ tags',
+          stepSpecs: 'AI Specs',
+          stepSpecsText: 'Generated Playwright specs ใช้ assertions และ locator guidance ที่เสถียร',
+          stepRun: 'Test Run',
+          stepRunText: 'Playwright รัน browser checks และเก็บ debug artifacts',
+          stepAnalysis: 'AI Analysis',
+          stepAnalysisText: 'สรุป failures เป็น engineering notes ที่นำไปแก้ต่อได้',
+          targetProjects: 'Target Projects',
+          targetProjectsText: 'Framework เดียวกันใช้รันกับหลาย portfolio applications ได้',
+          devpilotText: 'AI developer assistant ที่ test ผ่าน base URL ที่ config ได้',
+          codereviewText: 'AI code review workflow สำหรับ smoke, navigation และ generated scenarios',
+          portfolioText: 'Portfolio UI ที่ตรวจด้วย smoke checks และพร้อมต่อยอด visual regression',
+          footerGenerated: 'Report site generated by AutomateTestPilotAI'
+        }
+      };
+
+      const root = document.documentElement;
+      const langButton = document.querySelector('[data-lang-toggle]');
+      const themeButton = document.querySelector('[data-theme-toggle]');
+
+      function applyLanguage(lang) {
+        const active = messages[lang] ? lang : 'en';
+        root.lang = active;
+        localStorage.setItem('automate-test-pilot-ai.lang', active);
+        document.querySelectorAll('[data-i18n]').forEach((node) => {
+          const key = node.getAttribute('data-i18n');
+          node.textContent = messages[active][key] || node.textContent;
+        });
+        langButton.textContent = active === 'en' ? 'TH' : 'EN';
+      }
+
+      function applyTheme(theme) {
+        const active = theme === 'dark' ? 'dark' : 'light';
+        root.dataset.theme = active;
+        localStorage.setItem('automate-test-pilot-ai.theme', active);
+        themeButton.textContent = active === 'dark' ? 'Light' : 'Dark';
+      }
+
+      langButton.addEventListener('click', () => {
+        applyLanguage((localStorage.getItem('automate-test-pilot-ai.lang') || 'en') === 'en' ? 'th' : 'en');
+      });
+      themeButton.addEventListener('click', () => {
+        applyTheme((localStorage.getItem('automate-test-pilot-ai.theme') || 'light') === 'light' ? 'dark' : 'light');
+      });
+
+      applyTheme(localStorage.getItem('automate-test-pilot-ai.theme') || 'light');
+      applyLanguage(localStorage.getItem('automate-test-pilot-ai.lang') || 'en');
+    </script>
   </body>
 </html>

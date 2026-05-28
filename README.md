@@ -195,6 +195,8 @@ The full project runner also merges manual cases automatically before generating
 npm run test:project -- portfolio
 ```
 
+The report UI includes shared navigation, English/Thai language switching, and light/dark theme switching. Preferences are stored in browser local storage, so the selected language and theme persist across the dashboard and manual test case pages.
+
 Other useful commands:
 
 ```bash

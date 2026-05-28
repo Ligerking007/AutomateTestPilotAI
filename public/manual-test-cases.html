@@ -18,6 +18,19 @@
         --danger: #b42318;
         --shadow: 0 14px 34px rgba(16, 20, 24, 0.08);
       }
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #0f141b;
+        --surface: #151c25;
+        --surface-alt: #10231f;
+        --text: #f3f6f8;
+        --muted: #a7b1bd;
+        --line: #2c3745;
+        --accent: #14b8a6;
+        --accent-strong: #5eead4;
+        --danger: #f97066;
+        --shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+      }
       * { box-sizing: border-box; }
       body {
         margin: 0;
@@ -78,6 +91,43 @@
         background: var(--surface);
         color: var(--accent-strong);
         text-decoration: none;
+      }
+      .site-nav {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .nav-links,
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .nav-link,
+      .nav-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 750;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .nav-link.active,
+      .nav-button.active {
+        border-color: rgba(15, 118, 110, 0.35);
+        background: var(--surface-alt);
+        color: var(--accent-strong);
       }
       button,
       .file-button {
@@ -149,7 +199,7 @@
         min-height: 40px;
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: #ffffff;
+        background: var(--surface);
         color: var(--text);
         font: inherit;
         font-size: 14px;
@@ -210,7 +260,7 @@
         padding: 14px;
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: #ffffff;
+        background: var(--surface);
       }
       .case-head {
         display: flex;
@@ -286,6 +336,13 @@
           align-items: stretch;
           flex-direction: column;
         }
+        .site-nav,
+        .nav-links,
+        .nav-controls,
+        .nav-link,
+        .nav-button {
+          width: 100%;
+        }
         a,
         button,
         .file-button {
@@ -304,24 +361,35 @@
           <div class="mark" aria-hidden="true">TP</div>
           <div>
             <div class="brand-title">Manual Test Cases</div>
-            <div class="brand-subtitle">Create test cases for AI spec generation</div>
+            <div class="brand-subtitle" data-i18n="brandSubtitle">Create test cases for AI spec generation</div>
           </div>
         </div>
-        <a href="./index.html">Back to Dashboard</a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <div class="nav-links">
+            <a class="nav-link" href="./index.html" data-i18n="navDashboard">Dashboard</a>
+            <a class="nav-link active" href="./manual-test-cases.html" data-i18n="navManual">Manual Cases</a>
+            <a class="nav-link" href="./playwright-report/index.html" data-i18n="navReport">Playwright Report</a>
+            <a class="nav-link" href="https://github.com/Ligerking007/AutomateTestPilotAI" data-i18n="navRepo">GitHub Repository</a>
+          </div>
+          <div class="nav-controls" aria-label="Display preferences">
+            <button class="nav-button" type="button" data-lang-toggle>TH</button>
+            <button class="nav-button" type="button" data-theme-toggle>Dark</button>
+          </div>
+        </nav>
       </header>
 
-      <h1>Create manual test cases without editing JSON</h1>
-      <p>Use this page to draft manual cases, export them as JSON, then merge them into the AI automation pipeline.</p>
+      <h1 data-i18n="pageTitle">Create manual test cases without editing JSON</h1>
+      <p data-i18n="pageLead">Use this page to draft manual cases, export them as JSON, then merge them into the AI automation pipeline.</p>
 
       <section class="layout">
         <div class="panel">
           <div class="panel-head">
-            <h2 class="panel-title">Test Case Form</h2>
+            <h2 class="panel-title" data-i18n="formTitle">Test Case Form</h2>
           </div>
           <form id="caseForm">
             <div class="two-col">
               <label>
-                Target Project
+                <span data-i18n="targetProject">Target Project</span>
                 <select id="targetProject">
                   <option value="portfolio">JakapanKPortfolio</option>
                   <option value="devpilotai">DevPilotAI</option>
@@ -329,24 +397,24 @@
                 </select>
               </label>
               <label>
-                ID
+                <span data-i18n="caseId">ID</span>
                 <input id="caseId" placeholder="MANUAL-001">
               </label>
             </div>
 
             <label>
-              Title
+              <span data-i18n="title">Title</span>
               <input id="title" required placeholder="User can open the portfolio home page">
             </label>
 
             <label>
-              Description
+              <span data-i18n="description">Description</span>
               <textarea id="description" placeholder="Describe what this test validates"></textarea>
             </label>
 
             <div class="two-col">
               <label>
-                Priority
+                <span data-i18n="priority">Priority</span>
                 <select id="priority">
                   <option>High</option>
                   <option>Medium</option>
@@ -354,7 +422,7 @@
                 </select>
               </label>
               <label>
-                Test Type
+                <span data-i18n="testType">Test Type</span>
                 <select id="testType">
                   <option>UI</option>
                   <option>E2E</option>
@@ -365,55 +433,55 @@
             </div>
 
             <label>
-              Preconditions
+              <span data-i18n="preconditions">Preconditions</span>
               <textarea id="preconditions" placeholder="One precondition per line"></textarea>
             </label>
 
             <label>
-              Steps
+              <span data-i18n="steps">Steps</span>
               <textarea id="steps" required placeholder="One step per line"></textarea>
             </label>
 
             <label>
-              Expected Result
+              <span data-i18n="expectedResult">Expected Result</span>
               <textarea id="expectedResult" required placeholder="The expected behavior after all steps are completed"></textarea>
             </label>
 
             <label>
-              Tags
+              <span data-i18n="tags">Tags</span>
               <input id="tags" placeholder="smoke, manual, portfolio">
             </label>
 
             <div class="form-actions">
-              <button class="primary" type="submit">Save Test Case</button>
-              <button type="button" id="resetForm">Clear Form</button>
+              <button class="primary" type="submit" data-i18n="saveCase">Save Test Case</button>
+              <button type="button" id="resetForm" data-i18n="clearForm">Clear Form</button>
             </div>
           </form>
         </div>
 
         <div class="panel">
           <div class="panel-head toolbar">
-            <h2 class="panel-title">Manual Case Library</h2>
+            <h2 class="panel-title" data-i18n="libraryTitle">Manual Case Library</h2>
             <div class="list-actions">
-              <button type="button" id="exportJson">Export JSON</button>
-              <label class="file-button" for="importFile">Import JSON</label>
+              <button type="button" id="exportJson" data-i18n="exportJson">Export JSON</button>
+              <label class="file-button" for="importFile" data-i18n="importJson">Import JSON</label>
               <input id="importFile" type="file" accept="application/json,.json">
-              <button class="danger" type="button" id="clearAll">Clear All</button>
+              <button class="danger" type="button" id="clearAll" data-i18n="clearAll">Clear All</button>
             </div>
           </div>
 
           <div class="summary">
             <div class="metric">
               <strong id="caseCount">0</strong>
-              <span>Manual cases</span>
+              <span data-i18n="manualCases">Manual cases</span>
             </div>
             <div class="metric">
               <strong id="highCount">0</strong>
-              <span>High priority</span>
+              <span data-i18n="highPriority">High priority</span>
             </div>
             <div class="metric">
               <strong id="projectCount">0</strong>
-              <span>Target projects</span>
+              <span data-i18n="targetProjects">Target projects</span>
             </div>
           </div>
 
@@ -423,12 +491,86 @@
       </section>
 
       <section class="help">
-        <p>After exporting, save the file content to <strong>reports/manual-test-cases.json</strong>, then run:</p>
+        <p data-i18n="helpText">After exporting, save the file content to reports/manual-test-cases.json, then run:</p>
         <code>npm run manual:merge && npm run ai:generate-specs</code>
       </section>
     </main>
 
     <script>
+      const messages = {
+        en: {
+          brandSubtitle: 'Create test cases for AI spec generation',
+          navDashboard: 'Dashboard',
+          navManual: 'Manual Cases',
+          navReport: 'Playwright Report',
+          navRepo: 'GitHub Repository',
+          pageTitle: 'Create manual test cases without editing JSON',
+          pageLead: 'Use this page to draft manual cases, export them as JSON, then merge them into the AI automation pipeline.',
+          formTitle: 'Test Case Form',
+          targetProject: 'Target Project',
+          caseId: 'ID',
+          title: 'Title',
+          description: 'Description',
+          priority: 'Priority',
+          testType: 'Test Type',
+          preconditions: 'Preconditions',
+          steps: 'Steps',
+          expectedResult: 'Expected Result',
+          tags: 'Tags',
+          saveCase: 'Save Test Case',
+          clearForm: 'Clear Form',
+          libraryTitle: 'Manual Case Library',
+          exportJson: 'Export JSON',
+          importJson: 'Import JSON',
+          clearAll: 'Clear All',
+          manualCases: 'Manual cases',
+          highPriority: 'High priority',
+          targetProjects: 'Target projects',
+          helpText: 'After exporting, save the file content to reports/manual-test-cases.json, then run:',
+          emptyState: 'No manual test cases yet.',
+          edit: 'Edit',
+          delete: 'Delete',
+          clearConfirm: 'Clear all manual test cases from this browser?'
+        },
+        th: {
+          brandSubtitle: 'สร้าง test cases เพื่อใช้ต่อกับ AI spec generation',
+          navDashboard: 'หน้าหลัก',
+          navManual: 'Manual Cases',
+          navReport: 'รายงาน Playwright',
+          navRepo: 'GitHub Repository',
+          pageTitle: 'สร้าง manual test cases โดยไม่ต้องแก้ JSON เอง',
+          pageLead: 'ใช้หน้านี้ร่าง manual cases, export เป็น JSON แล้ว merge เข้า AI automation pipeline',
+          formTitle: 'ฟอร์ม Test Case',
+          targetProject: 'Target Project',
+          caseId: 'ID',
+          title: 'หัวข้อ',
+          description: 'คำอธิบาย',
+          priority: 'Priority',
+          testType: 'ประเภท Test',
+          preconditions: 'เงื่อนไขก่อนเริ่ม',
+          steps: 'ขั้นตอน',
+          expectedResult: 'ผลลัพธ์ที่คาดหวัง',
+          tags: 'Tags',
+          saveCase: 'บันทึก Test Case',
+          clearForm: 'ล้างฟอร์ม',
+          libraryTitle: 'Manual Case Library',
+          exportJson: 'Export JSON',
+          importJson: 'Import JSON',
+          clearAll: 'ล้างทั้งหมด',
+          manualCases: 'Manual cases',
+          highPriority: 'High priority',
+          targetProjects: 'Target projects',
+          helpText: 'หลัง export ให้บันทึกไฟล์ไว้ที่ reports/manual-test-cases.json แล้วรัน:',
+          emptyState: 'ยังไม่มี manual test cases',
+          edit: 'แก้ไข',
+          delete: 'ลบ',
+          clearConfirm: 'ต้องการลบ manual test cases ทั้งหมดจาก browser นี้ไหม?'
+        }
+      };
+
+      const root = document.documentElement;
+      const langButton = document.querySelector('[data-lang-toggle]');
+      const themeButton = document.querySelector('[data-theme-toggle]');
       const storageKey = 'automate-test-pilot-ai.manual-cases';
       const form = document.querySelector('#caseForm');
       const caseList = document.querySelector('#caseList');
@@ -438,6 +580,37 @@
       const projectCount = document.querySelector('#projectCount');
       const importFile = document.querySelector('#importFile');
       let editingId = null;
+      let activeLang = localStorage.getItem('automate-test-pilot-ai.lang') || 'en';
+
+      function t(key) {
+        return (messages[activeLang] && messages[activeLang][key]) || messages.en[key] || key;
+      }
+
+      function applyLanguage(lang) {
+        activeLang = messages[lang] ? lang : 'en';
+        root.lang = activeLang;
+        localStorage.setItem('automate-test-pilot-ai.lang', activeLang);
+        document.querySelectorAll('[data-i18n]').forEach((node) => {
+          const key = node.getAttribute('data-i18n');
+          node.textContent = t(key);
+        });
+        langButton.textContent = activeLang === 'en' ? 'TH' : 'EN';
+        render();
+      }
+
+      function applyTheme(theme) {
+        const active = theme === 'dark' ? 'dark' : 'light';
+        root.dataset.theme = active;
+        localStorage.setItem('automate-test-pilot-ai.theme', active);
+        themeButton.textContent = active === 'dark' ? 'Light' : 'Dark';
+      }
+
+      langButton.addEventListener('click', () => {
+        applyLanguage(activeLang === 'en' ? 'th' : 'en');
+      });
+      themeButton.addEventListener('click', () => {
+        applyTheme((localStorage.getItem('automate-test-pilot-ai.theme') || 'light') === 'light' ? 'dark' : 'light');
+      });
 
       function loadCases() {
         try {
@@ -501,7 +674,7 @@
       document.querySelector('#resetForm').addEventListener('click', resetForm);
 
       document.querySelector('#clearAll').addEventListener('click', () => {
-        if (confirm('Clear all manual test cases from this browser?')) {
+        if (confirm(t('clearConfirm'))) {
           saveCases([]);
           resetForm();
         }
@@ -559,7 +732,7 @@
         jsonOutput.textContent = JSON.stringify(cases, null, 2);
 
         if (cases.length === 0) {
-          caseList.innerHTML = '<div class="empty">No manual test cases yet.</div>';
+          caseList.innerHTML = '<div class="empty">' + escapeHtml(t('emptyState')) + '</div>';
           document.querySelector('#caseId').value = nextId(cases);
           return;
         }
@@ -572,8 +745,8 @@
                 <div class="case-meta">${escapeHtml(testCase.priority)} / ${escapeHtml(testCase.testType)} / ${escapeHtml(testCase.tags.join(', '))}</div>
               </div>
               <div class="list-actions">
-                <button type="button" onclick="editCase('${escapeAttribute(testCase.id)}')">Edit</button>
-                <button class="danger" type="button" onclick="deleteCase('${escapeAttribute(testCase.id)}')">Delete</button>
+                <button type="button" onclick="editCase('${escapeAttribute(testCase.id)}')">${escapeHtml(t('edit'))}</button>
+                <button class="danger" type="button" onclick="deleteCase('${escapeAttribute(testCase.id)}')">${escapeHtml(t('delete'))}</button>
               </div>
             </div>
             <ol class="case-steps">${testCase.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
@@ -596,7 +769,8 @@
 
       window.editCase = editCase;
       window.deleteCase = deleteCase;
-      render();
+      applyTheme(localStorage.getItem('automate-test-pilot-ai.theme') || 'light');
+      applyLanguage(activeLang);
       resetForm();
     </script>
   </body>
