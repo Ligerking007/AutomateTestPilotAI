@@ -1,0 +1,122 @@
+import path from 'node:path';
+import { copyDirectoryIfExists, copyFileIfExists, writeTextFile } from './fileHelper.js';
+
+async function main(): Promise<void> {
+  await copyDirectoryIfExists(path.resolve('playwright-report'), path.resolve('public/playwright-report'));
+  await copyFileIfExists(path.resolve('reports/ai-failure-analysis.md'), path.resolve('public/ai-failure-analysis.md'));
+  await copyFileIfExists(path.resolve('reports/test-cases.json'), path.resolve('public/test-cases.json'));
+  await writeTextFile(path.resolve('public/index.html'), buildIndexHtml());
+
+  console.log('Built static report site in public/');
+}
+
+function buildIndexHtml(): string {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AutomateTestPilotAI Reports</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f8fb;
+        --text: #111827;
+        --muted: #5b6472;
+        --panel: #ffffff;
+        --line: #d9dee8;
+        --accent: #0f766e;
+        --accent-dark: #115e59;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      main {
+        width: min(980px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 56px 0;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: 44px;
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+      p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.6;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-top: 32px;
+      }
+      a.card {
+        display: block;
+        min-height: 150px;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        color: inherit;
+        text-decoration: none;
+      }
+      a.card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+      }
+      .card strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+      .meta {
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+        font-size: 14px;
+      }
+      .repo {
+        color: var(--accent-dark);
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>AutomateTestPilotAI</h1>
+      <p>AI-powered Playwright automation framework for generating test cases, creating specs, running cross-browser checks, analyzing failures, and publishing reports.</p>
+
+      <section class="grid" aria-label="Report links">
+        <a class="card" href="./playwright-report/index.html">
+          <strong>Playwright HTML Report</strong>
+          <p>Cross-browser execution details with traces, screenshots, and videos on failure.</p>
+        </a>
+        <a class="card" href="./ai-failure-analysis.md">
+          <strong>AI Failure Analysis</strong>
+          <p>Root cause summary, affected file, risk level, and recommended next action.</p>
+        </a>
+        <a class="card" href="./test-cases.json">
+          <strong>Generated Test Cases</strong>
+          <p>Structured JSON test cases created from markdown requirements.</p>
+        </a>
+      </section>
+
+      <p class="meta">Repository: <span class="repo">https://github.com/Ligerking007/AutomateTestPilotAI</span></p>
+    </main>
+  </body>
+</html>
+`;
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

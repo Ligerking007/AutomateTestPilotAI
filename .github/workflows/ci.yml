@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Type check
+        run: npm run check
+
+      - name: Generate AI test cases
+        run: npm run ai:generate-cases
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4.1-mini' }}
+          BASE_URL: ${{ vars.BASE_URL || 'https://example.com' }}
+          TARGET_PROJECT: ${{ vars.TARGET_PROJECT || 'portfolio' }}
+
+      - name: Generate Playwright specs
+        run: npm run ai:generate-specs
+
+      - name: Run Playwright tests
+        id: playwright
+        continue-on-error: true
+        run: npm test
+        env:
+          BASE_URL: ${{ vars.BASE_URL || 'https://example.com' }}
+
+      - name: Analyze failures
+        if: always()
+        run: npm run ai:analyze-failure
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-4.1-mini' }}
+
+      - name: Build report site
+        if: always()
+        run: npm run report:site
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automate-test-pilot-ai-reports
+          path: |
+            public
+            reports
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+
+      - name: Fail if Playwright failed
+        if: steps.playwright.outcome == 'failure'
+        run: exit 1
