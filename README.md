@@ -178,6 +178,44 @@ npm run test:visual
 npm run check
 ```
 
+## Select Target Project
+
+Run the full AI automation pipeline against a specific project:
+
+```bash
+npm run test:project -- portfolio
+npm run test:project -- devpilotai
+npm run test:project -- codereviewpilotai
+```
+
+Shortcut commands:
+
+```bash
+npm run test:portfolio
+npm run test:devpilot
+npm run test:codereview
+```
+
+The project runner loads `src/config/projects.ts`, sets `TARGET_PROJECT` and `BASE_URL`, generates test cases, generates specs, runs Playwright, analyzes failures, and rebuilds the report site.
+
+Use `--test-only` when generated test cases/specs are already up to date:
+
+```bash
+npm run test:project -- portfolio --test-only
+```
+
+Run one browser while debugging locally:
+
+```bash
+npm run test:project -- portfolio --test-only --browser=chromium
+```
+
+Override the URL when the target app runs on a different port:
+
+```bash
+BASE_URL=http://localhost:3005 npm run test:project -- portfolio
+```
+
 ## GitHub Actions
 
 The CI workflow runs on push and pull request:

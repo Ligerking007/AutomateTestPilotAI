@@ -318,6 +318,26 @@ function buildIndexHtml(): string {
         font-size: 13px;
         line-height: 1.45;
       }
+      .command-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 14px;
+      }
+      code {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #0f172a;
+        color: #e2e8f0;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+        line-height: 1.45;
+        white-space: nowrap;
+      }
       .meta {
         display: flex;
         justify-content: space-between;
@@ -336,7 +356,8 @@ function buildIndexHtml(): string {
         .hero,
         .report-grid,
         .pipeline,
-        .project-list {
+        .project-list,
+        .command-list {
           grid-template-columns: 1fr;
         }
         .section-head {
@@ -507,6 +528,11 @@ function buildIndexHtml(): string {
             <strong>JakapanKPortfolio</strong>
             <span>Public portfolio UI validated with smoke and visual regression-ready checks.</span>
           </div>
+        </div>
+        <div class="command-list" aria-label="Project runner commands">
+          <code>npm run test:devpilot</code>
+          <code>npm run test:codereview</code>
+          <code>npm run test:portfolio</code>
         </div>
       </section>
 
