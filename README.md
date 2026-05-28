@@ -34,7 +34,9 @@ This project is designed as a portfolio-ready automation framework for these pro
 - Applitools Eyes
 - GitHub Actions
 - GitHub Pages
-- Markdown, JSON, and HTML reports
+- Markdown, JSON, and responsive HTML/CSS reports
+
+No extra frontend framework is required for the report UI. The dashboard and test case editor are static HTML/CSS/JavaScript pages so they can be deployed directly to GitHub Pages with a small bundle and no client-side build step.
 
 ## Architecture
 
@@ -195,7 +197,7 @@ The full project runner also merges manual cases automatically before generating
 npm run test:project -- portfolio
 ```
 
-The report UI includes shared navigation, English/Thai language switching, and light/dark theme switching. Preferences are stored in browser local storage, so the selected language and theme persist across the dashboard and manual test case pages.
+The report UI includes responsive layouts, centered shared navigation, English/Thai language switching, and light/dark theme switching. Preferences are stored in browser local storage, so the selected language and theme persist across the dashboard and manual test case pages.
 
 Other useful commands:
 

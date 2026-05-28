@@ -39,22 +39,51 @@
         color: var(--text);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+          linear-gradient(180deg, rgba(15, 118, 110, 0.08), transparent 280px),
+          linear-gradient(90deg, rgba(29, 78, 216, 0.06), transparent 42%);
+      }
       .page {
         width: min(1180px, calc(100% - 32px));
         margin: 0 auto;
-        padding: 28px 0 44px;
+        padding: 18px 0 44px;
       }
-      .topbar,
       .toolbar {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 14px;
       }
+      .topbar {
+        position: sticky;
+        top: 10px;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto minmax(92px, 1fr);
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding: 10px;
+        border: 1px solid rgba(215, 221, 229, 0.82);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 8px 24px rgba(16, 20, 24, 0.06);
+        backdrop-filter: blur(14px);
+      }
+      :root[data-theme="dark"] .topbar {
+        border-color: rgba(61, 74, 90, 0.82);
+        background: rgba(21, 28, 37, 0.9);
+      }
       .brand {
         display: flex;
         align-items: center;
         gap: 12px;
+        min-width: 0;
       }
       .mark {
         display: grid;
@@ -94,11 +123,7 @@
         text-decoration: none;
       }
       .site-nav {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 10px;
-        flex-wrap: wrap;
+        display: contents;
       }
       .nav-links,
       .nav-controls {
@@ -106,6 +131,12 @@
         align-items: center;
         gap: 8px;
         flex-wrap: wrap;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .nav-controls {
+        justify-content: flex-end;
       }
       .nav-link,
       .nav-button {
@@ -130,6 +161,13 @@
         background: var(--surface-alt);
         color: var(--accent-strong);
       }
+      .nav-link:hover,
+      .nav-button:hover,
+      button:hover,
+      .file-button:hover {
+        border-color: rgba(15, 118, 110, 0.45);
+        color: var(--accent-strong);
+      }
       .icon-button {
         width: 42px;
         padding: 0;
@@ -152,7 +190,7 @@
         color: var(--danger);
       }
       h1 {
-        margin: 32px 0 10px;
+        margin: 0 0 10px;
         max-width: 760px;
         font-size: 38px;
         line-height: 1.1;
@@ -176,10 +214,12 @@
         border-radius: 8px;
         background: var(--surface);
         box-shadow: var(--shadow);
+        overflow: hidden;
       }
       .panel-head {
         padding: 18px;
         border-bottom: 1px solid var(--line);
+        background: linear-gradient(180deg, var(--surface), var(--surface-alt));
       }
       .panel-title {
         margin: 0;
@@ -273,6 +313,12 @@
         border: 1px solid var(--line);
         border-radius: 8px;
         background: var(--surface);
+        transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+      .case-card:hover {
+        border-color: rgba(15, 118, 110, 0.45);
+        box-shadow: 0 10px 22px rgba(16, 20, 24, 0.08);
+        transform: translateY(-1px);
       }
       .case-head {
         display: flex;
@@ -353,7 +399,23 @@
         .case-picker {
           grid-template-columns: 1fr;
         }
-        .topbar,
+        .topbar {
+          position: static;
+          grid-template-columns: 1fr;
+        }
+        .site-nav {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .nav-links,
+        .nav-controls {
+          justify-content: stretch;
+          width: 100%;
+        }
+        .nav-link {
+          flex: 1 1 0;
+        }
         .toolbar {
           align-items: stretch;
           flex-direction: column;
@@ -372,6 +434,46 @@
         }
         h1 {
           font-size: 31px;
+        }
+      }
+      @media (max-width: 620px) {
+        .page {
+          width: min(100% - 24px, 1180px);
+          padding-top: 12px;
+        }
+        .topbar {
+          gap: 12px;
+        }
+        .nav-links,
+        .list-actions {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+        .nav-controls,
+        .form-actions {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        .form-actions button,
+        .list-actions button,
+        .file-button {
+          width: 100%;
+        }
+        .panel-head,
+        form,
+        .summary,
+        .case-picker,
+        .case-list {
+          padding: 14px;
+        }
+        .summary {
+          gap: 8px;
+        }
+        .case-head {
+          flex-direction: column;
+        }
+        .case-head .list-actions {
+          width: 100%;
         }
       }
     </style>

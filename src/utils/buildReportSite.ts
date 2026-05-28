@@ -60,20 +60,42 @@ function buildIndexHtml(): string {
         background: var(--bg);
         color: var(--text);
       }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+          linear-gradient(180deg, rgba(15, 118, 110, 0.08), transparent 280px),
+          linear-gradient(90deg, rgba(29, 78, 216, 0.06), transparent 42%);
+      }
       a {
         color: inherit;
       }
       .page {
-        width: min(1120px, calc(100% - 32px));
+        width: min(1160px, calc(100% - 32px));
         margin: 0 auto;
-        padding: 28px 0 40px;
+        padding: 18px 0 40px;
       }
       .topbar {
-        display: flex;
+        position: sticky;
+        top: 10px;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto minmax(92px, 1fr);
         align-items: center;
-        justify-content: space-between;
         gap: 16px;
-        padding: 14px 0 24px;
+        margin-bottom: 22px;
+        padding: 10px;
+        border: 1px solid rgba(215, 221, 229, 0.82);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 8px 24px rgba(16, 20, 24, 0.06);
+        backdrop-filter: blur(14px);
+      }
+      :root[data-theme="dark"] .topbar {
+        border-color: rgba(61, 74, 90, 0.82);
+        background: rgba(21, 28, 37, 0.9);
       }
       .brand {
         display: flex;
@@ -117,11 +139,7 @@ function buildIndexHtml(): string {
         white-space: nowrap;
       }
       .site-nav {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
+        display: contents;
       }
       .nav-links,
       .nav-controls {
@@ -129,6 +147,12 @@ function buildIndexHtml(): string {
         align-items: center;
         gap: 8px;
         flex-wrap: wrap;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .nav-controls {
+        justify-content: flex-end;
       }
       .nav-link,
       .nav-button {
@@ -153,6 +177,12 @@ function buildIndexHtml(): string {
         background: var(--surface-alt);
         color: var(--accent-strong);
       }
+      .nav-link:hover,
+      .nav-button:hover,
+      .button.secondary:hover {
+        border-color: rgba(15, 118, 110, 0.45);
+        color: var(--accent-strong);
+      }
       .icon-button {
         width: 42px;
         padding: 0;
@@ -163,7 +193,7 @@ function buildIndexHtml(): string {
         grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
         gap: 20px;
         align-items: stretch;
-        padding: 28px;
+        padding: 30px;
         border: 1px solid var(--line);
         border-radius: 8px;
         background: var(--surface);
@@ -205,6 +235,10 @@ function buildIndexHtml(): string {
         font-size: 14px;
         font-weight: 750;
         text-decoration: none;
+      }
+      .button:hover {
+        background: var(--accent-strong);
+        border-color: var(--accent-strong);
       }
       .button.secondary {
         border-color: var(--line);
@@ -297,10 +331,12 @@ function buildIndexHtml(): string {
         background: var(--panel);
         color: inherit;
         text-decoration: none;
+        transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
       }
       a.card:hover {
         border-color: var(--accent);
         box-shadow: var(--shadow);
+        transform: translateY(-2px);
       }
       .card-kicker {
         color: var(--muted);
@@ -337,6 +373,7 @@ function buildIndexHtml(): string {
         border: 1px solid var(--line);
         border-radius: 8px;
         background: var(--surface);
+        position: relative;
       }
       .step-num {
         color: var(--blue);
@@ -414,6 +451,23 @@ function buildIndexHtml(): string {
         font-weight: 700;
       }
       @media (max-width: 860px) {
+        .topbar {
+          position: static;
+          grid-template-columns: 1fr;
+        }
+        .site-nav {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .nav-links,
+        .nav-controls {
+          justify-content: stretch;
+          width: 100%;
+        }
+        .nav-link {
+          flex: 1 1 0;
+        }
         .hero,
         .report-grid,
         .pipeline,
@@ -432,11 +486,10 @@ function buildIndexHtml(): string {
       @media (max-width: 620px) {
         .page {
           width: min(100% - 24px, 1120px);
-          padding-top: 16px;
+          padding-top: 12px;
         }
         .topbar {
-          align-items: flex-start;
-          flex-direction: column;
+          gap: 12px;
         }
         .site-nav,
         .nav-links,
@@ -446,11 +499,23 @@ function buildIndexHtml(): string {
         .nav-button {
           width: 100%;
         }
+        .nav-links {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+        .nav-controls {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
         .hero {
-          padding: 20px;
+          padding: 18px;
         }
         h1 {
           font-size: 31px;
+        }
+        .hero-actions,
+        .button {
+          width: 100%;
         }
         .metrics {
           grid-template-columns: 1fr;
