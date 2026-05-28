@@ -496,7 +496,7 @@
           </div>
           <div class="nav-controls" aria-label="Display preferences">
             <button class="nav-button icon-button" type="button" data-lang-toggle aria-label="Current language: English" title="English">🇺🇸</button>
-            <button class="nav-button icon-button" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">🌙</button>
+            <button class="nav-button icon-button" type="button" data-theme-toggle aria-label="Current theme: light" title="Light theme">☀️</button>
           </div>
         </nav>
       </header>
@@ -770,9 +770,9 @@
         const active = theme === 'dark' ? 'dark' : 'light';
         root.dataset.theme = active;
         localStorage.setItem('automate-test-pilot-ai.theme', active);
-        themeButton.textContent = active === 'dark' ? '☀️' : '🌙';
-        themeButton.setAttribute('aria-label', active === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
-        themeButton.setAttribute('title', active === 'dark' ? 'Light theme' : 'Dark theme');
+        themeButton.textContent = active === 'dark' ? '🌙' : '☀️';
+        themeButton.setAttribute('aria-label', active === 'dark' ? 'Current theme: dark' : 'Current theme: light');
+        themeButton.setAttribute('title', active === 'dark' ? 'Dark theme' : 'Light theme');
       }
 
       langButton.addEventListener('click', () => {
