@@ -495,7 +495,7 @@
             <a class="nav-link" href="./playwright.html" data-i18n="navReport">Playwright Report</a>
           </div>
           <div class="nav-controls" aria-label="Display preferences">
-            <button class="nav-button icon-button" type="button" data-lang-toggle aria-label="Switch language" title="Switch language">🇹🇭</button>
+            <button class="nav-button icon-button" type="button" data-lang-toggle aria-label="Current language: English" title="English">🇺🇸</button>
             <button class="nav-button icon-button" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">🌙</button>
           </div>
         </nav>
@@ -760,9 +760,9 @@
           const key = node.getAttribute('data-i18n');
           node.textContent = t(key);
         });
-        langButton.textContent = activeLang === 'en' ? '🇹🇭' : '🇺🇸';
-        langButton.setAttribute('aria-label', activeLang === 'en' ? 'Switch language to Thai' : 'Switch language to English');
-        langButton.setAttribute('title', activeLang === 'en' ? 'ภาษาไทย' : 'English');
+        langButton.textContent = activeLang === 'en' ? '🇺🇸' : '🇹🇭';
+        langButton.setAttribute('aria-label', activeLang === 'en' ? 'Current language: English' : 'ภาษาปัจจุบัน: ไทย');
+        langButton.setAttribute('title', activeLang === 'en' ? 'English' : 'ภาษาไทย');
         render();
       }
 

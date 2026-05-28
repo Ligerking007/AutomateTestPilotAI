@@ -550,7 +550,7 @@ function buildIndexHtml(): string {
             <a class="nav-link" href="./playwright.html" data-i18n="navReport">Playwright Report</a>
           </div>
           <div class="nav-controls" aria-label="Display preferences">
-            <button class="nav-button icon-button" type="button" data-lang-toggle aria-label="Switch language" title="Switch language">🇹🇭</button>
+            <button class="nav-button icon-button" type="button" data-lang-toggle aria-label="Current language: English" title="English">🇺🇸</button>
             <button class="nav-button icon-button" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">🌙</button>
           </div>
         </nav>
@@ -808,9 +808,9 @@ function buildIndexHtml(): string {
           const key = node.getAttribute('data-i18n');
           node.textContent = messages[active][key] || node.textContent;
         });
-        langButton.textContent = active === 'en' ? '🇹🇭' : '🇺🇸';
-        langButton.setAttribute('aria-label', active === 'en' ? 'Switch language to Thai' : 'Switch language to English');
-        langButton.setAttribute('title', active === 'en' ? 'ภาษาไทย' : 'English');
+        langButton.textContent = active === 'en' ? '🇺🇸' : '🇹🇭';
+        langButton.setAttribute('aria-label', active === 'en' ? 'Current language: English' : 'ภาษาปัจจุบัน: ไทย');
+        langButton.setAttribute('title', active === 'en' ? 'English' : 'ภาษาไทย');
       }
 
       function applyTheme(theme) {
