@@ -137,6 +137,11 @@
         background: var(--surface-alt);
         color: var(--accent-strong);
       }
+      .icon-button {
+        width: 42px;
+        padding: 0;
+        font-size: 18px;
+      }
       .hero {
         display: grid;
         grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
@@ -462,8 +467,8 @@
             <a class="nav-link" href="./playwright-report/index.html" data-i18n="navReport">Playwright Report</a>
           </div>
           <div class="nav-controls" aria-label="Display preferences">
-            <button class="nav-button" type="button" data-lang-toggle>TH</button>
-            <button class="nav-button" type="button" data-theme-toggle>Dark</button>
+            <button class="nav-button icon-button" type="button" data-lang-toggle aria-label="Switch language" title="Switch language">🇹🇭</button>
+            <button class="nav-button icon-button" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">🌙</button>
           </div>
         </nav>
       </header>
@@ -719,14 +724,18 @@
           const key = node.getAttribute('data-i18n');
           node.textContent = messages[active][key] || node.textContent;
         });
-        langButton.textContent = active === 'en' ? 'TH' : 'EN';
+        langButton.textContent = active === 'en' ? '🇹🇭' : '🇺🇸';
+        langButton.setAttribute('aria-label', active === 'en' ? 'Switch language to Thai' : 'Switch language to English');
+        langButton.setAttribute('title', active === 'en' ? 'ภาษาไทย' : 'English');
       }
 
       function applyTheme(theme) {
         const active = theme === 'dark' ? 'dark' : 'light';
         root.dataset.theme = active;
         localStorage.setItem('automate-test-pilot-ai.theme', active);
-        themeButton.textContent = active === 'dark' ? 'Light' : 'Dark';
+        themeButton.textContent = active === 'dark' ? '☀️' : '🌙';
+        themeButton.setAttribute('aria-label', active === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+        themeButton.setAttribute('title', active === 'dark' ? 'Light theme' : 'Dark theme');
       }
 
       langButton.addEventListener('click', () => {
