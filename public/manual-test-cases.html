@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Manual Test Cases | AutomateTestPilotAI</title>
+    <title>Test Case Editor | AutomateTestPilotAI</title>
     <style>
       :root {
         color-scheme: light;
@@ -289,6 +289,15 @@
         color: var(--muted);
         text-align: center;
       }
+      .source-status {
+        margin: 0 18px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface-alt);
+        color: var(--muted);
+        font-size: 13px;
+      }
       .output {
         display: block;
         width: 100%;
@@ -360,8 +369,8 @@
         <div class="brand">
           <div class="mark" aria-hidden="true">TP</div>
           <div>
-            <div class="brand-title">Manual Test Cases</div>
-            <div class="brand-subtitle" data-i18n="brandSubtitle">Create test cases for AI spec generation</div>
+            <div class="brand-title" data-i18n="brandTitle">Test Case Editor</div>
+            <div class="brand-subtitle" data-i18n="brandSubtitle">Edit generated and manual test cases</div>
           </div>
         </div>
         <nav class="site-nav" aria-label="Main navigation">
@@ -369,7 +378,6 @@
             <a class="nav-link" href="./index.html" data-i18n="navDashboard">Dashboard</a>
             <a class="nav-link active" href="./manual-test-cases.html" data-i18n="navManual">Manual Cases</a>
             <a class="nav-link" href="./playwright-report/index.html" data-i18n="navReport">Playwright Report</a>
-            <a class="nav-link" href="https://github.com/Ligerking007/AutomateTestPilotAI" data-i18n="navRepo">GitHub Repository</a>
           </div>
           <div class="nav-controls" aria-label="Display preferences">
             <button class="nav-button" type="button" data-lang-toggle>TH</button>
@@ -378,8 +386,8 @@
         </nav>
       </header>
 
-      <h1 data-i18n="pageTitle">Create manual test cases without editing JSON</h1>
-      <p data-i18n="pageLead">Use this page to draft manual cases, export them as JSON, then merge them into the AI automation pipeline.</p>
+      <h1 data-i18n="pageTitle">Edit test cases from JSON without hand-editing files</h1>
+      <p data-i18n="pageLead">Load generated or manual JSON, edit test cases in a form, export the updated file, then merge it into the AI automation pipeline.</p>
 
       <section class="layout">
         <div class="panel">
@@ -463,6 +471,8 @@
           <div class="panel-head toolbar">
             <h2 class="panel-title" data-i18n="libraryTitle">Manual Case Library</h2>
             <div class="list-actions">
+              <button type="button" id="loadGenerated" data-i18n="loadGenerated">Load Generated JSON</button>
+              <button type="button" id="loadManual" data-i18n="loadManual">Load Manual JSON</button>
               <button type="button" id="exportJson" data-i18n="exportJson">Export JSON</button>
               <label class="file-button" for="importFile" data-i18n="importJson">Import JSON</label>
               <input id="importFile" type="file" accept="application/json,.json">
@@ -486,12 +496,13 @@
           </div>
 
           <div id="caseList" class="case-list"></div>
+          <p id="sourceStatus" class="source-status"></p>
           <pre id="jsonOutput" class="output" aria-label="JSON preview"></pre>
         </div>
       </section>
 
       <section class="help">
-        <p data-i18n="helpText">After exporting, save the file content to reports/manual-test-cases.json, then run:</p>
+        <p data-i18n="helpText">After exporting, save the file as reports/manual-test-cases.json or reports/test-cases.json, then run:</p>
         <code>npm run manual:merge && npm run ai:generate-specs</code>
       </section>
     </main>
@@ -499,13 +510,13 @@
     <script>
       const messages = {
         en: {
-          brandSubtitle: 'Create test cases for AI spec generation',
+          brandTitle: 'Test Case Editor',
+          brandSubtitle: 'Edit generated and manual test cases',
           navDashboard: 'Dashboard',
           navManual: 'Manual Cases',
           navReport: 'Playwright Report',
-          navRepo: 'GitHub Repository',
-          pageTitle: 'Create manual test cases without editing JSON',
-          pageLead: 'Use this page to draft manual cases, export them as JSON, then merge them into the AI automation pipeline.',
+          pageTitle: 'Edit test cases from JSON without hand-editing files',
+          pageLead: 'Load generated or manual JSON, edit test cases in a form, export the updated file, then merge it into the AI automation pipeline.',
           formTitle: 'Test Case Form',
           targetProject: 'Target Project',
           caseId: 'ID',
@@ -520,26 +531,34 @@
           saveCase: 'Save Test Case',
           clearForm: 'Clear Form',
           libraryTitle: 'Manual Case Library',
+          loadGenerated: 'Load Generated JSON',
+          loadManual: 'Load Manual JSON',
           exportJson: 'Export JSON',
           importJson: 'Import JSON',
           clearAll: 'Clear All',
           manualCases: 'Manual cases',
           highPriority: 'High priority',
           targetProjects: 'Target projects',
-          helpText: 'After exporting, save the file content to reports/manual-test-cases.json, then run:',
+          helpText: 'After exporting, save the file as reports/manual-test-cases.json or reports/test-cases.json, then run:',
           emptyState: 'No manual test cases yet.',
+          sourceStatus: 'Current source: {source}',
+          sourceLocal: 'Browser draft',
+          sourceGenerated: 'Generated test-cases.json',
+          sourceManual: 'Manual cases JSON',
+          sourceImported: 'Imported JSON',
+          loadError: 'Unable to load JSON file.',
           edit: 'Edit',
           delete: 'Delete',
           clearConfirm: 'Clear all manual test cases from this browser?'
         },
         th: {
-          brandSubtitle: 'สร้าง test cases เพื่อใช้ต่อกับ AI spec generation',
+          brandTitle: 'Test Case Editor',
+          brandSubtitle: 'แก้ไข generated และ manual test cases',
           navDashboard: 'หน้าหลัก',
           navManual: 'Manual Cases',
           navReport: 'รายงาน Playwright',
-          navRepo: 'GitHub Repository',
-          pageTitle: 'สร้าง manual test cases โดยไม่ต้องแก้ JSON เอง',
-          pageLead: 'ใช้หน้านี้ร่าง manual cases, export เป็น JSON แล้ว merge เข้า AI automation pipeline',
+          pageTitle: 'แก้ไข test cases จาก JSON โดยไม่ต้องแก้ไฟล์เอง',
+          pageLead: 'โหลด generated หรือ manual JSON, แก้ test cases ผ่านฟอร์ม, export ไฟล์ใหม่ แล้ว merge เข้า AI automation pipeline',
           formTitle: 'ฟอร์ม Test Case',
           targetProject: 'Target Project',
           caseId: 'ID',
@@ -554,14 +573,22 @@
           saveCase: 'บันทึก Test Case',
           clearForm: 'ล้างฟอร์ม',
           libraryTitle: 'Manual Case Library',
+          loadGenerated: 'โหลด Generated JSON',
+          loadManual: 'โหลด Manual JSON',
           exportJson: 'Export JSON',
           importJson: 'Import JSON',
           clearAll: 'ล้างทั้งหมด',
           manualCases: 'Manual cases',
           highPriority: 'High priority',
           targetProjects: 'Target projects',
-          helpText: 'หลัง export ให้บันทึกไฟล์ไว้ที่ reports/manual-test-cases.json แล้วรัน:',
+          helpText: 'หลัง export ให้บันทึกไฟล์เป็น reports/manual-test-cases.json หรือ reports/test-cases.json แล้วรัน:',
           emptyState: 'ยังไม่มี manual test cases',
+          sourceStatus: 'แหล่งข้อมูลปัจจุบัน: {source}',
+          sourceLocal: 'Draft ใน browser',
+          sourceGenerated: 'Generated test-cases.json',
+          sourceManual: 'Manual cases JSON',
+          sourceImported: 'Imported JSON',
+          loadError: 'โหลด JSON file ไม่สำเร็จ',
           edit: 'แก้ไข',
           delete: 'ลบ',
           clearConfirm: 'ต้องการลบ manual test cases ทั้งหมดจาก browser นี้ไหม?'
@@ -572,12 +599,14 @@
       const langButton = document.querySelector('[data-lang-toggle]');
       const themeButton = document.querySelector('[data-theme-toggle]');
       const storageKey = 'automate-test-pilot-ai.manual-cases';
+      const sourceKey = 'automate-test-pilot-ai.case-source';
       const form = document.querySelector('#caseForm');
       const caseList = document.querySelector('#caseList');
       const jsonOutput = document.querySelector('#jsonOutput');
       const caseCount = document.querySelector('#caseCount');
       const highCount = document.querySelector('#highCount');
       const projectCount = document.querySelector('#projectCount');
+      const sourceStatus = document.querySelector('#sourceStatus');
       const importFile = document.querySelector('#importFile');
       let editingId = null;
       let activeLang = localStorage.getItem('automate-test-pilot-ai.lang') || 'en';
@@ -623,6 +652,45 @@
       function saveCases(cases) {
         localStorage.setItem(storageKey, JSON.stringify(cases));
         render();
+      }
+
+      function setSource(source) {
+        localStorage.setItem(sourceKey, source);
+        render();
+      }
+
+      function getSource() {
+        return localStorage.getItem(sourceKey) || 'local';
+      }
+
+      function sourceLabel(source) {
+        const labels = {
+          local: t('sourceLocal'),
+          generated: t('sourceGenerated'),
+          manual: t('sourceManual'),
+          imported: t('sourceImported')
+        };
+        return labels[source] || t('sourceLocal');
+      }
+
+      function validateImportedCases(cases) {
+        if (!Array.isArray(cases)) {
+          throw new Error('Imported JSON must be an array.');
+        }
+        return cases;
+      }
+
+      async function loadJsonSource(url, source) {
+        try {
+          const response = await fetch(url, { cache: 'no-store' });
+          if (!response.ok) throw new Error(response.statusText);
+          const cases = validateImportedCases(await response.json());
+          localStorage.setItem(storageKey, JSON.stringify(cases));
+          setSource(source);
+          resetForm();
+        } catch {
+          alert(t('loadError'));
+        }
       }
 
       function lines(value) {
@@ -676,8 +744,17 @@
       document.querySelector('#clearAll').addEventListener('click', () => {
         if (confirm(t('clearConfirm'))) {
           saveCases([]);
+          setSource('local');
           resetForm();
         }
+      });
+
+      document.querySelector('#loadGenerated').addEventListener('click', () => {
+        loadJsonSource('./test-cases.json', 'generated');
+      });
+
+      document.querySelector('#loadManual').addEventListener('click', () => {
+        loadJsonSource('./manual-test-cases.json', 'manual');
       });
 
       document.querySelector('#exportJson').addEventListener('click', () => {
@@ -686,7 +763,7 @@
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'manual-test-cases.json';
+        link.download = getSource() === 'generated' ? 'test-cases.json' : 'manual-test-cases.json';
         link.click();
         URL.revokeObjectURL(url);
       });
@@ -694,13 +771,14 @@
       importFile.addEventListener('change', async () => {
         const file = importFile.files[0];
         if (!file) return;
-        const imported = JSON.parse(await file.text());
-        if (!Array.isArray(imported)) {
-          alert('Imported JSON must be an array.');
-          return;
+        try {
+          const imported = validateImportedCases(JSON.parse(await file.text()));
+          saveCases(imported);
+          setSource('imported');
+          importFile.value = '';
+        } catch {
+          alert(t('loadError'));
         }
-        saveCases(imported);
-        importFile.value = '';
       });
 
       function editCase(id) {
@@ -729,6 +807,7 @@
         caseCount.textContent = String(cases.length);
         highCount.textContent = String(cases.filter((item) => item.priority === 'High').length);
         projectCount.textContent = String(new Set(cases.flatMap((item) => item.tags.filter((tag) => ['portfolio', 'devpilotai', 'codereviewpilotai'].includes(tag)))).size);
+        sourceStatus.textContent = t('sourceStatus').replace('{source}', sourceLabel(getSource()));
         jsonOutput.textContent = JSON.stringify(cases, null, 2);
 
         if (cases.length === 0) {
