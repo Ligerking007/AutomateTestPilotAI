@@ -2,6 +2,7 @@ import path from 'node:path';
 import { copyDirectoryIfExists, copyFileIfExists, writeTextFile } from './fileHelper.js';
 
 async function main(): Promise<void> {
+  // Publish the latest test artifacts into public/ so GitHub Pages can serve one static site.
   await copyDirectoryIfExists(path.resolve('playwright-report'), path.resolve('public/playwright-report'));
   await copyFileIfExists(path.resolve('reports/ai-failure-analysis.md'), path.resolve('public/ai-failure-analysis.md'));
   await copyFileIfExists(path.resolve('reports/test-cases.json'), path.resolve('public/test-cases.json'));
@@ -13,6 +14,7 @@ async function main(): Promise<void> {
 }
 
 function buildIndexHtml(): string {
+  // Keep the dashboard self-contained because it is deployed as a static GitHub Pages artifact.
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -745,18 +747,18 @@ function buildIndexHtml(): string {
         th: {
           brandSubtitle: 'เฟรมเวิร์ก Playwright automation ที่ใช้ AI ช่วยทำงาน',
           navDashboard: 'หน้าหลัก',
-          navManual: 'Test Cases',
+          navManual: 'เทสเคส',
           navReport: 'รายงาน Playwright',
           heroTitle: 'แดชบอร์ดรายงานสำหรับ Playwright testing ที่ใช้ AI',
           heroText: 'แดชบอร์ด automation สำหรับ portfolio ที่เชื่อม requirement, test cases, Playwright execution, visual checks และ AI failure analysis ไว้ในที่เดียว',
           openReport: 'เปิด Playwright Report',
           readAnalysis: 'อ่าน AI Analysis',
-          createManual: 'เปิด Test Cases',
+          createManual: 'เปิดเทสเคส',
           latestRun: 'ผลรันล่าสุด',
           readyReview: 'พร้อมตรวจสอบ',
           statusDetail: 'รายงานถูกสร้างจาก local หรือ CI workflow ล่าสุด',
-          metricCases: 'Generated test cases',
-          metricBrowsers: 'Browser engines ที่ตั้งค่าไว้',
+          metricCases: 'เทสเคสที่สร้างแล้ว',
+          metricBrowsers: 'เบราว์เซอร์ที่ตั้งค่าไว้',
           metricAnalysis: 'เปิดใช้ failure analysis',
           reportsTitle: 'รายงาน',
           reportsNote: 'เปิด artifact ที่ต้องใช้สำหรับ debug, review หรือ demo ตอนสัมภาษณ์',
@@ -765,18 +767,18 @@ function buildIndexHtml(): string {
           openReportShort: 'เปิดรายงาน',
           failureAnalysis: 'AI Failure Analysis',
           failureAnalysisText: 'อ่าน root cause, affected file, risk level และ recommended next action',
-          viewAnalysis: 'ดู analysis',
-          generatedCases: 'Generated Test Cases',
+          viewAnalysis: 'ดูผลวิเคราะห์',
+          generatedCases: 'เทสเคสที่สร้างจาก AI',
           generatedCasesText: 'ดู JSON test cases ที่สร้างจาก markdown requirements และใช้ต่อกับ spec generator',
           viewJson: 'ดู JSON',
-          manualUi: 'Manual Test Case UI',
+          manualUi: 'หน้าแก้ไขเทสเคส',
           manualUiText: 'สร้าง import export และตรวจ manual cases ก่อน merge เข้า generated specs',
-          createCases: 'สร้าง cases',
+          createCases: 'สร้างเทสเคส',
           pipelineTitle: 'Automation Pipeline',
           pipelineNote: 'Workflow เปลี่ยน product requirements ให้เป็น executable tests และ reviewable reports',
           stepRequirements: 'Requirements',
           stepRequirementsText: 'Markdown files อธิบายพฤติกรรมที่ระบบควรทำได้',
-          stepCases: 'AI หรือ Manual Test Cases',
+          stepCases: 'เทสเคสจาก AI หรือ Manual',
           stepCasesText: 'AI และ manual input สร้าง structured cases พร้อม steps, priority และ tags',
           stepSpecs: 'AI Specs',
           stepSpecsText: 'Generated Playwright specs ใช้ assertions และ locator guidance ที่เสถียร',
@@ -784,7 +786,7 @@ function buildIndexHtml(): string {
           stepRunText: 'Playwright รัน browser checks และเก็บ debug artifacts',
           stepAnalysis: 'AI Analysis',
           stepAnalysisText: 'สรุป failures เป็น engineering notes ที่นำไปแก้ต่อได้',
-          targetProjects: 'Target Projects',
+          targetProjects: 'โปรเจกต์เป้าหมาย',
           targetProjectsText: 'Framework เดียวกันใช้รันกับหลาย portfolio applications ได้',
           devpilotText: 'AI developer assistant ที่ test ผ่าน base URL ที่ config ได้',
           codereviewText: 'AI code review workflow สำหรับ smoke, navigation และ generated scenarios',
@@ -797,6 +799,7 @@ function buildIndexHtml(): string {
       const langButton = document.querySelector('[data-lang-toggle]');
       const themeButton = document.querySelector('[data-theme-toggle]');
 
+      // Apply i18n by replacing only nodes marked with data-i18n.
       function applyLanguage(lang) {
         const active = messages[lang] ? lang : 'en';
         root.lang = active;
@@ -835,6 +838,7 @@ function buildIndexHtml(): string {
 }
 
 function buildPlaywrightReportHtml(): string {
+  // Wrap the native Playwright report with project navigation without editing generated Playwright files.
   return `<!doctype html>
 <html lang="en">
   <head>

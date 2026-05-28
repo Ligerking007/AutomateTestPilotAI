@@ -8,6 +8,8 @@ const outputFile = path.resolve('tests/generated/ai.generated.spec.ts');
 
 async function main(): Promise<void> {
   const testCases = await readJsonFile<TestCase[]>(inputFile);
+
+  // Ask AI for the first draft, then validate the output before writing an executable spec.
   const aiOutput = await runAiPrompt({
     system: 'You are a senior Playwright automation engineer. Return TypeScript code only, no markdown fences.',
     user: buildPrompt(testCases),
@@ -42,6 +44,7 @@ ${JSON.stringify(testCases, null, 2)}
 }
 
 function sanitizeAiSpec(raw: string): string {
+  // Strip markdown fences because LLMs may still return them even when the prompt says code only.
   const cleaned = raw
     .replace(/^```(?:ts|typescript)?\s*/i, '')
     .replace(/```$/i, '')
@@ -60,6 +63,7 @@ function sanitizeAiSpec(raw: string): string {
 
 function buildFallbackSpec(testCases: TestCase[]): string {
   console.log('No AI API key found. Using deterministic Playwright spec generator for local demo.');
+  // The fallback keeps the portfolio demo runnable without requiring an OpenAI key.
   const tests = testCases.map(buildTestBlock).join('\n\n');
 
   return `import { test, expect } from '@playwright/test';

@@ -683,44 +683,44 @@
         },
         th: {
           brandTitle: 'Automate Test Pilot AI',
-          brandSubtitle: 'Test Case Editor',
+          brandSubtitle: 'ตัวแก้ไขเทสเคส',
           navDashboard: 'หน้าหลัก',
-          navManual: 'Test Cases',
+          navManual: 'เทสเคส',
           navReport: 'รายงาน Playwright',
           pageTitle: 'แก้ไข test cases จาก JSON โดยไม่ต้องแก้ไฟล์เอง',
           pageLead: 'โหลด generated หรือ manual JSON, แก้ test cases ผ่านฟอร์ม, export ไฟล์ใหม่ แล้ว merge เข้า AI automation pipeline',
-          formTitle: 'ฟอร์ม Test Case',
-          targetProject: 'Target Project',
+          formTitle: 'ฟอร์มเทสเคส',
+          targetProject: 'โปรเจกต์เป้าหมาย',
           caseId: 'ID',
           title: 'หัวข้อ',
           description: 'คำอธิบาย',
-          priority: 'Priority',
-          testType: 'ประเภท Test',
+          priority: 'ความสำคัญ',
+          testType: 'ประเภทเทสต์',
           preconditions: 'เงื่อนไขก่อนเริ่ม',
           steps: 'ขั้นตอน',
           expectedResult: 'ผลลัพธ์ที่คาดหวัง',
           tags: 'Tags',
-          saveCase: 'บันทึก Test Case',
+          saveCase: 'บันทึกเทสเคส',
           clearForm: 'ล้างฟอร์ม',
-          libraryTitle: 'Test Case Library',
+          libraryTitle: 'คลังเทสเคส',
           loadGenerated: 'โหลด Generated JSON',
           loadManual: 'โหลด Manual JSON',
           searchCases: 'ค้นหา test cases',
-          selectCase: 'เลือก test case ตามหัวข้อ',
-          selectCasePlaceholder: 'เลือก test case',
-          exportJson: 'Export JSON',
-          importJson: 'Import JSON',
+          selectCase: 'เลือกเทสเคสตามหัวข้อ',
+          selectCasePlaceholder: 'เลือกเทสเคส',
+          exportJson: 'ส่งออก JSON',
+          importJson: 'นำเข้า JSON',
           clearAll: 'ล้างทั้งหมด',
-          manualCases: 'Manual cases',
-          highPriority: 'High priority',
-          targetProjects: 'Target projects',
+          manualCases: 'เทสเคสทั้งหมด',
+          highPriority: 'ความสำคัญสูง',
+          targetProjects: 'โปรเจกต์เป้าหมาย',
           helpText: 'หลัง export ให้บันทึกไฟล์เป็น reports/manual-test-cases.json หรือ reports/test-cases.json แล้วรัน:',
           emptyState: 'ยังไม่มี manual test cases',
           sourceStatus: 'แหล่งข้อมูลปัจจุบัน: {source}',
-          sourceLocal: 'Draft ใน browser',
-          sourceGenerated: 'Generated test-cases.json',
-          sourceManual: 'Manual cases JSON',
-          sourceImported: 'Imported JSON',
+          sourceLocal: 'ฉบับร่างในเบราว์เซอร์',
+          sourceGenerated: 'ไฟล์ generated test-cases.json',
+          sourceManual: 'ไฟล์ manual cases JSON',
+          sourceImported: 'ไฟล์ JSON ที่นำเข้า',
           loadError: 'โหลด JSON file ไม่สำเร็จ',
           edit: 'แก้ไข',
           delete: 'ลบ',
@@ -747,6 +747,7 @@
       let editingId = null;
       let activeLang = localStorage.getItem('automate-test-pilot-ai.lang') || 'en';
 
+      // Centralized translation lookup keeps all visible labels in sync after language changes.
       function t(key) {
         return (messages[activeLang] && messages[activeLang][key]) || messages.en[key] || key;
       }
@@ -781,6 +782,7 @@
         applyTheme((localStorage.getItem('automate-test-pilot-ai.theme') || 'light') === 'light' ? 'dark' : 'light');
       });
 
+      // The editor stores drafts in localStorage so it works on GitHub Pages without a backend.
       function loadCases() {
         try {
           return JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -820,6 +822,7 @@
         return cases;
       }
 
+      // Load report artifacts published by CI and copy them into the editable browser draft.
       async function loadJsonSource(url, source) {
         try {
           const response = await fetch(url, { cache: 'no-store' });
@@ -915,6 +918,7 @@
         URL.revokeObjectURL(url);
       });
 
+      // Keep the visible control as a normal button while delegating to the hidden file input.
       importJsonButton.addEventListener('click', () => {
         importFile.click();
       });
@@ -963,6 +967,7 @@
         jsonOutput.textContent = JSON.stringify(cases, null, 2);
         renderCaseSelector(cases);
 
+        // Render from state each time so search, language, and edits cannot drift apart.
         if (cases.length === 0) {
           caseList.innerHTML = '<div class="empty">' + escapeHtml(t('emptyState')) + '</div>';
           document.querySelector('#caseId').value = nextId(cases);
