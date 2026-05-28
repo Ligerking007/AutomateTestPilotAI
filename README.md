@@ -176,7 +176,7 @@ The report site includes a manual test case UI:
 public/manual-test-cases.html
 ```
 
-Use it to load generated JSON, load manual JSON, create/edit cases in a form, import external JSON, and export the updated file without editing JSON by hand. Exported manual cases should be saved to:
+Use it to load generated JSON, load manual JSON, search and select test cases by title, create/edit cases in a form, import external JSON, and export the updated file without editing JSON by hand. Exported manual cases should be saved to:
 
 ```text
 reports/manual-test-cases.json

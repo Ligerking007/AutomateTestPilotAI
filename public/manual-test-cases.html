@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Test Case Editor | AutomateTestPilotAI</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <style>
       :root {
         color-scheme: light;
@@ -261,6 +262,12 @@
         gap: 10px;
         padding: 18px;
       }
+      .case-picker {
+        display: grid;
+        grid-template-columns: minmax(180px, 0.8fr) minmax(220px, 1.2fr);
+        gap: 10px;
+        padding: 18px 18px 0;
+      }
       .case-card {
         padding: 14px;
         border: 1px solid var(--line);
@@ -342,7 +349,8 @@
       @media (max-width: 880px) {
         .layout,
         .two-col,
-        .summary {
+        .summary,
+        .case-picker {
           grid-template-columns: 1fr;
         }
         .topbar,
@@ -500,6 +508,18 @@
             </div>
           </div>
 
+          <div class="case-picker">
+            <label>
+              <span data-i18n="searchCases">Search test cases</span>
+              <input id="caseSearch" placeholder="Search by title, id, or tag">
+            </label>
+            <label>
+              <span data-i18n="selectCase">Select test case by title</span>
+              <select id="caseSelector">
+                <option value="">Select a test case</option>
+              </select>
+            </label>
+          </div>
           <div id="caseList" class="case-list"></div>
           <p id="sourceStatus" class="source-status"></p>
           <pre id="jsonOutput" class="output" aria-label="JSON preview"></pre>
@@ -538,6 +558,9 @@
           libraryTitle: 'Manual Case Library',
           loadGenerated: 'Load Generated JSON',
           loadManual: 'Load Manual JSON',
+          searchCases: 'Search test cases',
+          selectCase: 'Select test case by title',
+          selectCasePlaceholder: 'Select a test case',
           exportJson: 'Export JSON',
           importJson: 'Import JSON',
           clearAll: 'Clear All',
@@ -580,6 +603,9 @@
           libraryTitle: 'Manual Case Library',
           loadGenerated: 'โหลด Generated JSON',
           loadManual: 'โหลด Manual JSON',
+          searchCases: 'ค้นหา test cases',
+          selectCase: 'เลือก test case ตามหัวข้อ',
+          selectCasePlaceholder: 'เลือก test case',
           exportJson: 'Export JSON',
           importJson: 'Import JSON',
           clearAll: 'ล้างทั้งหมด',
@@ -612,6 +638,8 @@
       const highCount = document.querySelector('#highCount');
       const projectCount = document.querySelector('#projectCount');
       const sourceStatus = document.querySelector('#sourceStatus');
+      const caseSearch = document.querySelector('#caseSearch');
+      const caseSelector = document.querySelector('#caseSelector');
       const importFile = document.querySelector('#importFile');
       let editingId = null;
       let activeLang = localStorage.getItem('automate-test-pilot-ai.lang') || 'en';
@@ -722,6 +750,7 @@
         form.reset();
         editingId = null;
         document.querySelector('#caseId').value = nextId(loadCases());
+        caseSelector.value = '';
       }
 
       form.addEventListener('submit', (event) => {
@@ -749,6 +778,12 @@
       });
 
       document.querySelector('#resetForm').addEventListener('click', resetForm);
+      caseSearch.addEventListener('input', render);
+      caseSelector.addEventListener('change', () => {
+        if (caseSelector.value) {
+          editCase(caseSelector.value);
+        }
+      });
 
       document.querySelector('#clearAll').addEventListener('click', () => {
         if (confirm(t('clearConfirm'))) {
@@ -794,6 +829,7 @@
         const testCase = loadCases().find((item) => item.id === id);
         if (!testCase) return;
         editingId = id;
+        caseSelector.value = id;
         document.querySelector('#caseId').value = testCase.id;
         document.querySelector('#title').value = testCase.title;
         document.querySelector('#description').value = testCase.description;
@@ -818,6 +854,7 @@
         projectCount.textContent = String(new Set(cases.flatMap((item) => item.tags.filter((tag) => ['portfolio', 'devpilotai', 'codereviewpilotai'].includes(tag)))).size);
         sourceStatus.textContent = t('sourceStatus').replace('{source}', sourceLabel(getSource()));
         jsonOutput.textContent = JSON.stringify(cases, null, 2);
+        renderCaseSelector(cases);
 
         if (cases.length === 0) {
           caseList.innerHTML = '<div class="empty">' + escapeHtml(t('emptyState')) + '</div>';
@@ -825,7 +862,14 @@
           return;
         }
 
-        caseList.innerHTML = cases.map((testCase) => `
+        const visibleCases = filterCases(cases);
+
+        if (visibleCases.length === 0) {
+          caseList.innerHTML = '<div class="empty">' + escapeHtml(t('emptyState')) + '</div>';
+          return;
+        }
+
+        caseList.innerHTML = visibleCases.map((testCase) => `
           <article class="case-card">
             <div class="case-head">
               <div>
@@ -840,6 +884,31 @@
             <ol class="case-steps">${testCase.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>
           </article>
         `).join('');
+      }
+
+      function filterCases(cases) {
+        const query = caseSearch.value.trim().toLowerCase();
+
+        if (!query) {
+          return cases;
+        }
+
+        return cases.filter((testCase) => [
+          testCase.id,
+          testCase.title,
+          testCase.description,
+          testCase.priority,
+          testCase.testType,
+          ...(testCase.tags || [])
+        ].join(' ').toLowerCase().includes(query));
+      }
+
+      function renderCaseSelector(cases) {
+        const currentValue = caseSelector.value;
+        caseSelector.innerHTML = '<option value="">' + escapeHtml(t('selectCasePlaceholder')) + '</option>' + cases
+          .map((testCase) => '<option value="' + escapeAttribute(testCase.id) + '">' + escapeHtml(testCase.id + ' - ' + testCase.title) + '</option>')
+          .join('');
+        caseSelector.value = cases.some((testCase) => testCase.id === currentValue) ? currentValue : '';
       }
 
       function escapeHtml(value) {
