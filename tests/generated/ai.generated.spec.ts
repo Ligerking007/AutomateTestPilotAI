@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('AI generated portfolio checks', () => {
+test.describe('AI generated portfolio checks fallback', () => {
   test('TC-001 JakapanKPortfolio home page loads successfully @smoke @homepage', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('body')).toBeVisible();

@@ -148,6 +148,26 @@ npm run ai:analyze-failure
 npm run report:site
 ```
 
+## AI Workflow
+
+### 1. AI Test Case Generator
+
+`src/ai/generateTestCases.ts` reads every markdown file from `requirements/`, sends the requirement content to OpenAI or Azure OpenAI, and writes structured test cases to `reports/test-cases.json`.
+
+Each generated test case includes `id`, `title`, `description`, `priority`, `preconditions`, `steps`, `expectedResult`, `testType`, and `tags`.
+
+### 2. AI Playwright Spec Generator
+
+`src/ai/generateSpec.ts` reads `reports/test-cases.json`, asks AI to generate a Playwright TypeScript spec, validates that the output uses Playwright imports and assertions, blocks hard-coded sleeps, and saves the result under `tests/generated/`.
+
+When no AI key is available, it falls back to a deterministic generator so the project still works in public demos.
+
+### 3. AI Failure Analyzer
+
+`src/ai/analyzeFailure.ts` reads the Playwright JSON report, detects failed tests, collects error details and artifacts, sends the failure summary to AI, and writes `reports/ai-failure-analysis.md`.
+
+The report includes Summary, Root Cause, Failed Step, Possible Fix, Affected File, Risk Level, and Recommended Next Action.
+
 Other useful commands:
 
 ```bash

@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { runAiPrompt } from './openAiClient.js';
 import type { TestCase } from '../types/testCase.js';
 import { readJsonFile, writeTextFile } from '../utils/fileHelper.js';
 
@@ -7,18 +8,63 @@ const outputFile = path.resolve('tests/generated/ai.generated.spec.ts');
 
 async function main(): Promise<void> {
   const testCases = await readJsonFile<TestCase[]>(inputFile);
-  const spec = buildSpec(testCases);
+  const aiOutput = await runAiPrompt({
+    system: 'You are a senior Playwright automation engineer. Return TypeScript code only, no markdown fences.',
+    user: buildPrompt(testCases),
+    temperature: 0.1
+  });
+
+  const spec = aiOutput ? sanitizeAiSpec(aiOutput) : buildFallbackSpec(testCases);
 
   await writeTextFile(outputFile, spec);
   console.log(`Generated ${testCases.length} Playwright test(s) at ${outputFile}`);
 }
 
-function buildSpec(testCases: TestCase[]): string {
+function buildPrompt(testCases: TestCase[]): string {
+  return `
+Generate a complete Playwright TypeScript spec file from these test cases.
+
+Rules:
+- Import { test, expect } from '@playwright/test'
+- Use accessible locators such as getByRole, getByLabel, and getByTestId where practical
+- Use expect assertions
+- Do not use waitForTimeout or hard-coded sleeps
+- Use page.goto('/') unless a test case clearly requires another route
+- Keep tests stable for a portfolio demo
+- Use reusable Page Object Model imports only if they are helpful:
+  - import { LoginPage } from '../../src/pages/LoginPage.js'
+  - import { DashboardPage } from '../../src/pages/DashboardPage.js'
+- Output only valid TypeScript code
+
+Test cases:
+${JSON.stringify(testCases, null, 2)}
+`.trim();
+}
+
+function sanitizeAiSpec(raw: string): string {
+  const cleaned = raw
+    .replace(/^```(?:ts|typescript)?\s*/i, '')
+    .replace(/```$/i, '')
+    .trim();
+
+  if (!cleaned.includes("from '@playwright/test'") || !cleaned.includes('expect(')) {
+    throw new Error('AI-generated spec is missing required Playwright imports or assertions.');
+  }
+
+  if (cleaned.includes('waitForTimeout')) {
+    throw new Error('AI-generated spec used waitForTimeout, which is not allowed.');
+  }
+
+  return `${cleaned}\n`;
+}
+
+function buildFallbackSpec(testCases: TestCase[]): string {
+  console.log('No AI API key found. Using deterministic Playwright spec generator for local demo.');
   const tests = testCases.map(buildTestBlock).join('\n\n');
 
   return `import { test, expect } from '@playwright/test';
 
-test.describe('AI generated portfolio checks', () => {
+test.describe('AI generated portfolio checks fallback', () => {
 ${tests}
 });
 `;
