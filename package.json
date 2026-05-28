@@ -4,6 +4,10 @@
   "description": "AI-powered Playwright automation framework for portfolio projects.",
   "private": false,
   "type": "module",
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=11"
+  },
   "scripts": {
     "test": "playwright test",
     "test:ui": "playwright test --ui",
@@ -29,7 +33,7 @@
   "devDependencies": {
     "@applitools/eyes-playwright": "^1.33.1",
     "@playwright/test": "^1.53.0",
-    "@types/node": "^22.15.21",
+    "@types/node": "^24.0.0",
     "dotenv": "^16.5.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
