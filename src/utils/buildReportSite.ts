@@ -7,6 +7,7 @@ async function main(): Promise<void> {
   await copyFileIfExists(path.resolve('reports/test-cases.json'), path.resolve('public/test-cases.json'));
   await copyFileIfExists(path.resolve('reports/manual-test-cases.json'), path.resolve('public/manual-test-cases.json'));
   await writeTextFile(path.resolve('public/index.html'), buildIndexHtml());
+  await writeTextFile(path.resolve('public/playwright.html'), buildPlaywrightReportHtml());
 
   console.log('Built static report site in public/');
 }
@@ -479,7 +480,7 @@ function buildIndexHtml(): string {
           <div class="nav-links">
             <a class="nav-link active" href="./index.html" data-i18n="navDashboard">Dashboard</a>
             <a class="nav-link" href="./manual-test-cases.html" data-i18n="navManual">Manual Cases</a>
-            <a class="nav-link" href="./playwright-report/index.html" data-i18n="navReport">Playwright Report</a>
+            <a class="nav-link" href="./playwright.html" data-i18n="navReport">Playwright Report</a>
           </div>
           <div class="nav-controls" aria-label="Display preferences">
             <button class="nav-button icon-button" type="button" data-lang-toggle aria-label="Switch language" title="Switch language">🇹🇭</button>
@@ -493,7 +494,7 @@ function buildIndexHtml(): string {
           <h1 data-i18n="heroTitle">Automation reports for AI-generated Playwright testing</h1>
           <p class="lede" data-i18n="heroText">A portfolio-ready test automation dashboard that connects requirements, generated test cases, Playwright execution, visual checks, and AI failure analysis in one deployable report site.</p>
           <div class="hero-actions">
-            <a class="button" href="./playwright-report/index.html" data-i18n="openReport">Open Playwright Report</a>
+            <a class="button" href="./playwright.html" data-i18n="openReport">Open Playwright Report</a>
             <a class="button secondary" href="./ai-failure-analysis.md" data-i18n="readAnalysis">Read AI Analysis</a>
             <a class="button secondary" href="./manual-test-cases.html" data-i18n="createManual">Create Manual Cases</a>
           </div>
@@ -525,7 +526,7 @@ function buildIndexHtml(): string {
           <p class="section-note" data-i18n="reportsNote">Open the artifact you need for debugging, review, or interview walkthroughs.</p>
         </div>
         <div class="report-grid">
-          <a class="card" href="./playwright-report/index.html">
+          <a class="card" href="./playwright.html">
             <div>
               <div class="card-kicker">Execution</div>
               <strong class="card-title" data-i18n="playwrightReport">Playwright HTML Report</strong>
@@ -763,6 +764,184 @@ function buildIndexHtml(): string {
       applyTheme(localStorage.getItem('automate-test-pilot-ai.theme') || 'light');
       applyLanguage(localStorage.getItem('automate-test-pilot-ai.lang') || 'en');
     </script>
+  </body>
+</html>
+`;
+}
+
+function buildPlaywrightReportHtml(): string {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Playwright Report | AutomateTestPilotAI</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --surface-alt: #eef4f2;
+        --text: #101418;
+        --muted: #5a6573;
+        --line: #d7dde5;
+        --accent-strong: #115e59;
+        --shadow: 0 14px 34px rgba(16, 20, 24, 0.08);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      .shell {
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(14px);
+      }
+      .header-inner {
+        width: min(1180px, calc(100% - 32px));
+        min-height: 70px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(210px, 1fr) auto minmax(210px, 1fr);
+        gap: 16px;
+        align-items: center;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        color: inherit;
+        text-decoration: none;
+      }
+      .mark {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--accent-strong);
+        font-weight: 850;
+      }
+      .brand-title {
+        display: block;
+        font-size: 16px;
+        font-weight: 850;
+        line-height: 1.2;
+      }
+      .brand-subtitle {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .nav a,
+      .raw-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 750;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .nav a.active {
+        border-color: rgba(15, 118, 110, 0.35);
+        background: var(--surface-alt);
+        color: var(--accent-strong);
+      }
+      .right-actions {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .report-frame {
+        width: min(1180px, calc(100% - 32px));
+        height: calc(100vh - 94px);
+        margin: 16px auto 24px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+      iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #ffffff;
+      }
+      @media (max-width: 860px) {
+        .header-inner {
+          grid-template-columns: 1fr;
+          padding: 12px 0;
+        }
+        .brand,
+        .right-actions {
+          justify-content: center;
+          text-align: center;
+        }
+        .report-frame {
+          height: calc(100vh - 190px);
+          margin-top: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="site-header">
+        <div class="header-inner">
+          <a class="brand" href="./index.html" aria-label="AutomateTestPilotAI home">
+            <span class="mark">TP</span>
+            <span>
+              <span class="brand-title">AutomateTestPilotAI</span>
+              <span class="brand-subtitle">Playwright execution report</span>
+            </span>
+          </a>
+          <nav class="nav" aria-label="Report navigation">
+            <a href="./index.html">Dashboard</a>
+            <a class="active" href="./playwright.html">Playwright Report</a>
+            <a href="./manual-test-cases.html">Test Cases</a>
+            <a href="./ai-failure-analysis.md">AI Analysis</a>
+          </nav>
+          <div class="right-actions">
+            <a class="raw-link" href="./playwright-report/index.html" target="_blank" rel="noreferrer">Open Raw Report</a>
+          </div>
+        </div>
+      </header>
+      <main class="report-frame">
+        <iframe src="./playwright-report/index.html" title="Playwright HTML report"></iframe>
+      </main>
+    </div>
   </body>
 </html>
 `;
