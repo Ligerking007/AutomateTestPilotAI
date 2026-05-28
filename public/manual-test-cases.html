@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Test Case Editor | AutomateTestPilotAI</title>
+    <title>Test Case Editor | Automate Test Pilot AI</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <style>
       :root {
@@ -484,14 +484,14 @@
         <div class="brand">
           <div class="mark" aria-hidden="true">TP</div>
           <div>
-            <div class="brand-title" data-i18n="brandTitle">Test Case Editor</div>
-            <div class="brand-subtitle" data-i18n="brandSubtitle">Edit generated and manual test cases</div>
+            <div class="brand-title" data-i18n="brandTitle">Automate Test Pilot AI</div>
+            <div class="brand-subtitle" data-i18n="brandSubtitle">Test Case Editor</div>
           </div>
         </div>
         <nav class="site-nav" aria-label="Main navigation">
           <div class="nav-links">
             <a class="nav-link" href="./index.html" data-i18n="navDashboard">Dashboard</a>
-            <a class="nav-link active" href="./manual-test-cases.html" data-i18n="navManual">Manual Cases</a>
+            <a class="nav-link active" href="./manual-test-cases.html" data-i18n="navManual">Test Cases</a>
             <a class="nav-link" href="./playwright.html" data-i18n="navReport">Playwright Report</a>
           </div>
           <div class="nav-controls" aria-label="Display preferences">
@@ -584,12 +584,12 @@
 
         <div class="panel">
           <div class="panel-head toolbar">
-            <h2 class="panel-title" data-i18n="libraryTitle">Manual Case Library</h2>
+            <h2 class="panel-title" data-i18n="libraryTitle">Test Case Library</h2>
             <div class="list-actions">
               <button type="button" id="loadGenerated" data-i18n="loadGenerated">Load Generated JSON</button>
               <button type="button" id="loadManual" data-i18n="loadManual">Load Manual JSON</button>
               <button type="button" id="exportJson" data-i18n="exportJson">Export JSON</button>
-              <label class="file-button" for="importFile" data-i18n="importJson">Import JSON</label>
+              <button type="button" id="importJsonButton" data-i18n="importJson">Import JSON</button>
               <input id="importFile" type="file" accept="application/json,.json">
               <button class="danger" type="button" id="clearAll" data-i18n="clearAll">Clear All</button>
             </div>
@@ -637,10 +637,10 @@
     <script>
       const messages = {
         en: {
-          brandTitle: 'Test Case Editor',
-          brandSubtitle: 'Edit generated and manual test cases',
+          brandTitle: 'Automate Test Pilot AI',
+          brandSubtitle: 'Test Case Editor',
           navDashboard: 'Dashboard',
-          navManual: 'Manual Cases',
+          navManual: 'Test Cases',
           navReport: 'Playwright Report',
           pageTitle: 'Edit test cases from JSON without hand-editing files',
           pageLead: 'Load generated or manual JSON, edit test cases in a form, export the updated file, then merge it into the AI automation pipeline.',
@@ -657,7 +657,7 @@
           tags: 'Tags',
           saveCase: 'Save Test Case',
           clearForm: 'Clear Form',
-          libraryTitle: 'Manual Case Library',
+          libraryTitle: 'Test Case Library',
           loadGenerated: 'Load Generated JSON',
           loadManual: 'Load Manual JSON',
           searchCases: 'Search test cases',
@@ -682,10 +682,10 @@
           clearConfirm: 'Clear all manual test cases from this browser?'
         },
         th: {
-          brandTitle: 'Test Case Editor',
-          brandSubtitle: 'แก้ไข generated และ manual test cases',
+          brandTitle: 'Automate Test Pilot AI',
+          brandSubtitle: 'Test Case Editor',
           navDashboard: 'หน้าหลัก',
-          navManual: 'Manual Cases',
+          navManual: 'Test Cases',
           navReport: 'รายงาน Playwright',
           pageTitle: 'แก้ไข test cases จาก JSON โดยไม่ต้องแก้ไฟล์เอง',
           pageLead: 'โหลด generated หรือ manual JSON, แก้ test cases ผ่านฟอร์ม, export ไฟล์ใหม่ แล้ว merge เข้า AI automation pipeline',
@@ -702,7 +702,7 @@
           tags: 'Tags',
           saveCase: 'บันทึก Test Case',
           clearForm: 'ล้างฟอร์ม',
-          libraryTitle: 'Manual Case Library',
+          libraryTitle: 'Test Case Library',
           loadGenerated: 'โหลด Generated JSON',
           loadManual: 'โหลด Manual JSON',
           searchCases: 'ค้นหา test cases',
@@ -742,6 +742,7 @@
       const sourceStatus = document.querySelector('#sourceStatus');
       const caseSearch = document.querySelector('#caseSearch');
       const caseSelector = document.querySelector('#caseSelector');
+      const importJsonButton = document.querySelector('#importJsonButton');
       const importFile = document.querySelector('#importFile');
       let editingId = null;
       let activeLang = localStorage.getItem('automate-test-pilot-ai.lang') || 'en';
@@ -912,6 +913,10 @@
         link.download = getSource() === 'generated' ? 'test-cases.json' : 'manual-test-cases.json';
         link.click();
         URL.revokeObjectURL(url);
+      });
+
+      importJsonButton.addEventListener('click', () => {
+        importFile.click();
       });
 
       importFile.addEventListener('change', async () => {
