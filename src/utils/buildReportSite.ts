@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { targetProjects } from '../config/projects.js';
 import { copyDirectoryIfExists, copyFileIfExists, writeTextFile } from './fileHelper.js';
 
 async function main(): Promise<void> {
@@ -1323,6 +1324,7 @@ function buildStaticCommandCenterHtml(): string {
       const saveTargetButton = document.querySelector('#saveTargetButton');
       const newTargetButton = document.querySelector('#newTargetButton');
       const exportButton = document.querySelector('#exportButton');
+      const defaultTargets = ${JSON.stringify(targetProjects)};
 
       function loadTargets() {
         try {
@@ -1393,6 +1395,18 @@ function buildStaticCommandCenterHtml(): string {
         targetDescriptionInput.value = target.description || '';
       };
 
+      window.copyDefaultTarget = function copyDefaultTarget(id) {
+        const target = defaultTargets.find((item) => item.id === id);
+        if (!target) return;
+        targetIdInput.disabled = false;
+        targetIdInput.value = target.id + '-uat';
+        targetNameInput.value = target.name + ' UAT';
+        targetBaseUrlInput.value = target.defaultBaseUrl;
+        targetLocalPathInput.value = target.localPath || '';
+        targetTagsInput.value = Array.from(new Set([...(target.tags || []), 'uat'])).join(', ');
+        targetDescriptionInput.value = target.description || '';
+      };
+
       window.deleteTarget = function deleteTarget(id) {
         if (!confirm('Delete this target?')) return;
         saveTargets(loadTargets().filter((target) => target.id !== id));
@@ -1411,21 +1425,22 @@ function buildStaticCommandCenterHtml(): string {
       }
 
       function renderTargets() {
-        const targets = loadTargets();
-
-        if (targets.length === 0) {
-          targetList.innerHTML = '<div class="empty">No local targets yet.</div>';
-          return;
-        }
+        const localTargets = loadTargets();
+        const targets = [
+          ...defaultTargets.map((target) => ({ ...target, source: 'Default', editable: false })),
+          ...localTargets.map((target) => ({ ...target, source: 'Local', editable: true }))
+        ];
 
         targetList.innerHTML = targets.map((target) => '<article class="target-card">' +
-          '<div class="target-meta">' + escapeHtml(target.id) + '</div>' +
+          '<div class="target-meta">' + escapeHtml(target.source) + ' / ' + escapeHtml(target.id) + '</div>' +
           '<strong>' + escapeHtml(target.name) + '</strong>' +
           '<code>' + escapeHtml(target.defaultBaseUrl) + '</code>' +
           '<span class="target-meta">' + escapeHtml((target.tags || []).join(', ')) + '</span>' +
           '<div class="controls">' +
-            '<button class="secondary" type="button" onclick="editTarget(\\'' + escapeAttribute(target.id) + '\\')">Edit</button>' +
-            '<button class="danger" type="button" onclick="deleteTarget(\\'' + escapeAttribute(target.id) + '\\')">Delete</button>' +
+            (target.editable
+              ? '<button class="secondary" type="button" onclick="editTarget(\\'' + escapeAttribute(target.id) + '\\')">Edit</button>' +
+                '<button class="danger" type="button" onclick="deleteTarget(\\'' + escapeAttribute(target.id) + '\\')">Delete</button>'
+              : '<button class="secondary" type="button" onclick="copyDefaultTarget(\\'' + escapeAttribute(target.id) + '\\')">Copy as UAT</button>') +
           '</div>' +
         '</article>').join('');
       }
