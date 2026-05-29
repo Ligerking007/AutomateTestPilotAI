@@ -150,6 +150,7 @@ npm run test:unit
 npm test
 npm run ai:analyze-failure
 npm run report:site
+npm run ui:local
 ```
 
 ## AI Workflow
@@ -189,6 +190,34 @@ Current unit coverage focuses on the project logic that should stay stable:
 
 CI runs unit tests after TypeScript checking and before generating AI test cases or running Playwright browser tests.
 
+## Local Command Center
+
+The project includes a local-only UI for running common npm scripts and viewing command output from the browser.
+
+```bash
+npm run ui:local
+```
+
+Open:
+
+```text
+http://127.0.0.1:4174
+```
+
+The command center runs on your machine, not on GitHub Pages. It intentionally uses a whitelist instead of accepting arbitrary shell commands. Available actions include:
+
+- Type check
+- Unit tests
+- Generate AI test cases
+- Merge manual test cases
+- Generate Playwright specs
+- Run Playwright tests
+- Analyze failures
+- Build report site
+- Run the full target project pipeline
+
+Use the Project, Browser, BASE_URL, and `--test-only` controls to run the same workflow you would normally run from the terminal.
+
 ## Manual Test Cases
 
 The report site includes a manual test case UI:
@@ -226,6 +255,7 @@ npm run test:headed
 npm run test:report
 npm run test:visual
 npm run test:unit
+npm run ui:local
 npm run check
 ```
 
