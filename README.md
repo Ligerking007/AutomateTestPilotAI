@@ -221,6 +221,14 @@ Use the Project, Browser, BASE_URL, and `--test-only` controls to run the same w
 
 ### Target Config UI
 
+The report site includes a static Command Center link for discovering and drafting target config:
+
+```text
+public/command-center.html
+```
+
+On GitHub Pages, this page can add, edit, and delete target config in browser local storage only. It cannot run npm scripts or write files on your machine.
+
 The Local Command Center also includes a Target Config section for UAT or internal web apps you want to automate.
 
 You can add, edit, and delete local targets from the browser:
@@ -241,6 +249,8 @@ config/local-projects.json
 That file is ignored by Git so internal UAT URLs do not get committed to GitHub. The command center combines default targets from `src/config/projects.ts` with local targets from `config/local-projects.json`, so saved UAT targets immediately appear in the Project dropdown.
 
 For public or portfolio-safe targets, keep them in `src/config/projects.ts`. For private company UAT URLs, use the local Target Config UI.
+
+If you draft targets from the static GitHub Pages page, export the JSON as `local-projects.json` and place it under `config/local-projects.json` locally before running automation commands.
 
 ## Manual Test Cases
 

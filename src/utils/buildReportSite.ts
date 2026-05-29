@@ -9,6 +9,7 @@ async function main(): Promise<void> {
   await copyFileIfExists(path.resolve('reports/manual-test-cases.json'), path.resolve('public/manual-test-cases.json'));
   await writeTextFile(path.resolve('public/index.html'), buildIndexHtml());
   await writeTextFile(path.resolve('public/playwright.html'), buildPlaywrightReportHtml());
+  await writeTextFile(path.resolve('public/command-center.html'), buildStaticCommandCenterHtml());
 
   console.log('Built static report site in public/');
 }
@@ -548,7 +549,7 @@ function buildIndexHtml(): string {
             <a class="nav-link active" href="./index.html" data-i18n="navDashboard">Dashboard</a>
             <a class="nav-link" href="./manual-test-cases.html" data-i18n="navManual">Test Cases</a>
             <a class="nav-link" href="./playwright.html" data-i18n="navReport">Playwright Report</a>
-            <a class="nav-link" href="http://127.0.0.1:4174" target="_blank" rel="noreferrer" data-i18n="navCommandCenter">Command Center</a>
+            <a class="nav-link" href="./command-center.html" data-i18n="navCommandCenter">Command Center</a>
           </div>
           <div class="nav-controls" aria-label="Display preferences">
             <button class="nav-button icon-button" type="button" data-lang-toggle aria-label="Current language: English" title="English">🇺🇸</button>
@@ -565,7 +566,7 @@ function buildIndexHtml(): string {
             <a class="button" href="./playwright.html" data-i18n="openReport">Open Playwright Report</a>
             <a class="button secondary" href="./ai-failure-analysis.md" data-i18n="readAnalysis">Read AI Analysis</a>
             <a class="button secondary" href="./manual-test-cases.html" data-i18n="createManual">Open Test Cases</a>
-            <a class="button secondary" href="http://127.0.0.1:4174" target="_blank" rel="noreferrer" data-i18n="openCommandCenter">Open Command Center</a>
+            <a class="button secondary" href="./command-center.html" data-i18n="openCommandCenter">Open Command Center</a>
           </div>
         </div>
         <aside class="status-panel" aria-label="Latest run status">
@@ -627,7 +628,7 @@ function buildIndexHtml(): string {
             </div>
             <span class="card-cta" data-i18n="createCases">Create cases</span>
           </a>
-          <a class="card" href="http://127.0.0.1:4174" target="_blank" rel="noreferrer">
+          <a class="card" href="./command-center.html">
             <div>
               <div class="card-kicker">Local Runner</div>
               <strong class="card-title" data-i18n="commandCenter">Command Center</strong>
@@ -1031,6 +1032,422 @@ function buildPlaywrightReportHtml(): string {
         <iframe src="./playwright-report/index.html" title="Playwright HTML report"></iframe>
       </main>
     </div>
+  </body>
+</html>
+`;
+}
+
+function buildStaticCommandCenterHtml(): string {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Command Center | Automate Test Pilot AI</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --surface-alt: #eef4f2;
+        --text: #101418;
+        --muted: #5a6573;
+        --line: #d7dde5;
+        --accent: #0f766e;
+        --accent-strong: #115e59;
+        --danger: #b42318;
+        --shadow: 0 14px 34px rgba(16, 20, 24, 0.08);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      .page {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 24px 0 44px;
+      }
+      .topbar,
+      .controls,
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .mark {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--accent-strong);
+        font-weight: 850;
+      }
+      a,
+      button,
+      input {
+        min-height: 40px;
+        border-radius: 8px;
+        font: inherit;
+        font-size: 14px;
+      }
+      a {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--accent-strong);
+        font-weight: 750;
+        text-decoration: none;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #ffffff;
+        font-weight: 800;
+        padding: 0 14px;
+      }
+      button.secondary {
+        border-color: var(--line);
+        background: var(--surface);
+        color: var(--text);
+      }
+      button.danger {
+        border-color: rgba(180, 35, 24, 0.28);
+        background: var(--surface);
+        color: var(--danger);
+      }
+      h1 {
+        margin: 28px 0 8px;
+        font-size: 36px;
+        line-height: 1.1;
+      }
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .notice {
+        margin-top: 18px;
+        padding: 14px;
+        border: 1px solid rgba(15, 118, 110, 0.24);
+        border-radius: 8px;
+        background: var(--surface-alt);
+        color: var(--accent-strong);
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+        gap: 16px;
+        margin-top: 24px;
+        align-items: start;
+      }
+      .panel {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+      .panel-head {
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface-alt);
+      }
+      .panel-title {
+        margin: 0;
+        font-size: 18px;
+      }
+      .form,
+      .target-list {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+      }
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      label {
+        display: grid;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 750;
+      }
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--text);
+        padding: 8px 10px;
+      }
+      .target-card {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .target-card code {
+        color: var(--accent-strong);
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+      .target-meta {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .empty {
+        padding: 24px;
+        color: var(--muted);
+        text-align: center;
+      }
+      @media (max-width: 820px) {
+        .layout,
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+        .topbar,
+        .controls,
+        .panel-head {
+          align-items: stretch;
+          flex-direction: column;
+        }
+        a,
+        button {
+          justify-content: center;
+          width: 100%;
+        }
+        h1 {
+          font-size: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <div class="brand">
+          <div class="mark">TP</div>
+          <div>
+            <strong>Automate Test Pilot AI</strong>
+            <p>Command Center</p>
+          </div>
+        </div>
+        <div class="controls">
+          <a href="./index.html">Dashboard</a>
+          <a href="http://127.0.0.1:4174" target="_blank" rel="noreferrer">Open Local Runner</a>
+        </div>
+      </header>
+
+      <h1>Target Config</h1>
+      <p>Add, edit, and delete UAT or internal web URLs from this browser.</p>
+      <div class="notice">Static mode: this page stores targets in browser localStorage only. To run npm commands or save config/local-projects.json, start <code>npm run ui:local</code> and open the Local Runner.</div>
+
+      <section class="layout">
+        <section class="panel">
+          <div class="panel-head">
+            <h2 class="panel-title">Edit Target</h2>
+          </div>
+          <div class="form">
+            <div class="two-col">
+              <label>
+                Target ID
+                <input id="targetId" placeholder="myapp-uat">
+              </label>
+              <label>
+                Name
+                <input id="targetName" placeholder="My App UAT">
+              </label>
+            </div>
+            <label>
+              Base URL
+              <input id="targetBaseUrl" placeholder="https://uat.example.com">
+            </label>
+            <label>
+              Local Path
+              <input id="targetLocalPath" placeholder="/Users/jakapank/SourceCode/MyApp">
+            </label>
+            <label>
+              Tags
+              <input id="targetTags" placeholder="uat, smoke, regression">
+            </label>
+            <label>
+              Description
+              <input id="targetDescription" placeholder="Company UAT environment">
+            </label>
+            <div class="controls">
+              <button id="saveTargetButton" type="button">Save Target</button>
+              <button id="newTargetButton" class="secondary" type="button">New Target</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2 class="panel-title">Saved Targets</h2>
+            <button id="exportButton" class="secondary" type="button">Export JSON</button>
+          </div>
+          <div id="targetList" class="target-list"></div>
+        </section>
+      </section>
+    </main>
+    <script>
+      const storageKey = 'automate-test-pilot-ai.static-targets';
+      const targetList = document.querySelector('#targetList');
+      const targetIdInput = document.querySelector('#targetId');
+      const targetNameInput = document.querySelector('#targetName');
+      const targetBaseUrlInput = document.querySelector('#targetBaseUrl');
+      const targetLocalPathInput = document.querySelector('#targetLocalPath');
+      const targetTagsInput = document.querySelector('#targetTags');
+      const targetDescriptionInput = document.querySelector('#targetDescription');
+      const saveTargetButton = document.querySelector('#saveTargetButton');
+      const newTargetButton = document.querySelector('#newTargetButton');
+      const exportButton = document.querySelector('#exportButton');
+
+      function loadTargets() {
+        try {
+          return JSON.parse(localStorage.getItem(storageKey) || '[]');
+        } catch {
+          return [];
+        }
+      }
+
+      function saveTargets(targets) {
+        localStorage.setItem(storageKey, JSON.stringify(targets));
+        renderTargets();
+      }
+
+      function normalizeTarget() {
+        const id = targetIdInput.value.trim().toLowerCase();
+        const defaultBaseUrl = targetBaseUrlInput.value.trim();
+
+        if (!/^[a-z0-9][a-z0-9-]*$/.test(id)) {
+          throw new Error('Target ID must use lowercase letters, numbers, and hyphens only.');
+        }
+
+        if (!targetNameInput.value.trim()) {
+          throw new Error('Name is required.');
+        }
+
+        new URL(defaultBaseUrl);
+
+        return {
+          id,
+          name: targetNameInput.value.trim(),
+          defaultBaseUrl,
+          localPath: targetLocalPathInput.value.trim(),
+          tags: targetTagsInput.value.split(',').map((tag) => tag.trim().toLowerCase()).filter(Boolean),
+          description: targetDescriptionInput.value.trim()
+        };
+      }
+
+      function clearForm() {
+        targetIdInput.disabled = false;
+        targetIdInput.value = '';
+        targetNameInput.value = '';
+        targetBaseUrlInput.value = '';
+        targetLocalPathInput.value = '';
+        targetTagsInput.value = '';
+        targetDescriptionInput.value = '';
+      }
+
+      function saveTarget() {
+        try {
+          const target = normalizeTarget();
+          saveTargets([...loadTargets().filter((item) => item.id !== target.id), target]);
+          clearForm();
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+
+      window.editTarget = function editTarget(id) {
+        const target = loadTargets().find((item) => item.id === id);
+        if (!target) return;
+        targetIdInput.value = target.id;
+        targetIdInput.disabled = true;
+        targetNameInput.value = target.name;
+        targetBaseUrlInput.value = target.defaultBaseUrl;
+        targetLocalPathInput.value = target.localPath || '';
+        targetTagsInput.value = (target.tags || []).join(', ');
+        targetDescriptionInput.value = target.description || '';
+      };
+
+      window.deleteTarget = function deleteTarget(id) {
+        if (!confirm('Delete this target?')) return;
+        saveTargets(loadTargets().filter((target) => target.id !== id));
+        clearForm();
+      };
+
+      function exportTargets() {
+        const content = JSON.stringify(loadTargets(), null, 2) + '\\n';
+        const blob = new Blob([content], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'local-projects.json';
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function renderTargets() {
+        const targets = loadTargets();
+
+        if (targets.length === 0) {
+          targetList.innerHTML = '<div class="empty">No local targets yet.</div>';
+          return;
+        }
+
+        targetList.innerHTML = targets.map((target) => '<article class="target-card">' +
+          '<div class="target-meta">' + escapeHtml(target.id) + '</div>' +
+          '<strong>' + escapeHtml(target.name) + '</strong>' +
+          '<code>' + escapeHtml(target.defaultBaseUrl) + '</code>' +
+          '<span class="target-meta">' + escapeHtml((target.tags || []).join(', ')) + '</span>' +
+          '<div class="controls">' +
+            '<button class="secondary" type="button" onclick="editTarget(\\'' + escapeAttribute(target.id) + '\\')">Edit</button>' +
+            '<button class="danger" type="button" onclick="deleteTarget(\\'' + escapeAttribute(target.id) + '\\')">Delete</button>' +
+          '</div>' +
+        '</article>').join('');
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value).replaceAll(String.fromCharCode(96), '&#096;');
+      }
+
+      saveTargetButton.addEventListener('click', saveTarget);
+      newTargetButton.addEventListener('click', clearForm);
+      exportButton.addEventListener('click', exportTargets);
+      renderTargets();
+    </script>
   </body>
 </html>
 `;
