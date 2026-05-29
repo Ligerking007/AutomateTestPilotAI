@@ -3,6 +3,9 @@
 [![CI](https://github.com/Ligerking007/AutomateTestPilotAI/actions/workflows/ci.yml/badge.svg)](https://github.com/Ligerking007/AutomateTestPilotAI/actions/workflows/ci.yml)
 [![Pages](https://github.com/Ligerking007/AutomateTestPilotAI/actions/workflows/pages.yml/badge.svg)](https://github.com/Ligerking007/AutomateTestPilotAI/actions/workflows/pages.yml)
 
+Current version: **1.1.0**  
+Release notes: [CHANGELOG.md](./CHANGELOG.md)
+
 AI-powered Playwright automation framework for generating test cases from requirements, generating Playwright specs, running cross-browser tests, analyzing failures, and publishing reports to GitHub Pages.
 
 This project is designed as a portfolio-ready automation framework for these projects:
@@ -205,7 +208,9 @@ Open:
 http://127.0.0.1:4174
 ```
 
-The command center runs on your machine, not on GitHub Pages. It intentionally uses a whitelist instead of accepting arbitrary shell commands. Available actions include:
+The same `public/command-center.html` page is used in both static and local modes. When the page is served by `npm run ui:local`, it connects to the local API, enables the Run Command button, and executes only whitelisted npm scripts. When the page is served by GitHub Pages or a static server, it stays in preview mode and the Run Command button remains disabled.
+
+Available local runner actions include:
 
 - Type check
 - Unit tests
@@ -221,13 +226,13 @@ Use the Project, Browser, BASE_URL, and `--test-only` controls to run the same w
 
 ### Target Config UI
 
-The report site includes a static Command Center link for discovering and drafting target config:
+The report site includes a Command Center link for discovering commands, previewing run options, and drafting target config:
 
 ```text
 public/command-center.html
 ```
 
-On GitHub Pages, this page can add, edit, and delete target config in browser local storage only. It cannot run npm scripts or write files on your machine.
+On GitHub Pages, this page can preview the same Commands and Run Options from the Local Command Center, and it can add, edit, and delete target config in browser local storage only. It cannot run npm scripts or write files on your machine. Start `npm run ui:local` to use the same page with local command execution enabled.
 
 The Local Command Center also includes a Target Config section for UAT or internal web apps you want to automate.
 

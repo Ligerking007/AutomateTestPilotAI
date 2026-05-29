@@ -1,6 +1,9 @@
 import path from 'node:path';
 import { targetProjects } from '../config/projects.js';
+import { commandDefinitions } from '../ui/localCommandServer.js';
 import { copyDirectoryIfExists, copyFileIfExists, writeTextFile } from './fileHelper.js';
+
+const appVersion = '1.1.0';
 
 async function main(): Promise<void> {
   // Publish the latest test artifacts into public/ so GitHub Pages can serve one static site.
@@ -127,6 +130,20 @@ function buildIndexHtml(): string {
         color: var(--muted);
         font-size: 13px;
         line-height: 1.4;
+      }
+      .version-badge {
+        display: inline-flex;
+        align-items: center;
+        width: max-content;
+        min-height: 22px;
+        margin-top: 4px;
+        padding: 0 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface-alt);
+        color: var(--accent-strong);
+        font-size: 12px;
+        font-weight: 800;
       }
       .repo-link {
         display: inline-flex;
@@ -543,6 +560,7 @@ function buildIndexHtml(): string {
           <div>
             <div class="brand-title">Automate Test Pilot AI</div>
             <div class="brand-subtitle" data-i18n="brandSubtitle">AI-powered Playwright automation framework</div>
+            <div class="version-badge">v${appVersion}</div>
           </div>
         </div>
         <nav class="site-nav" aria-label="Main navigation">
@@ -941,6 +959,20 @@ function buildPlaywrightReportHtml(): string {
         font-size: 13px;
         line-height: 1.4;
       }
+      .version-badge {
+        display: inline-flex;
+        align-items: center;
+        width: max-content;
+        min-height: 22px;
+        margin-top: 4px;
+        padding: 0 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface-alt);
+        color: var(--accent-strong);
+        font-size: 12px;
+        font-weight: 800;
+      }
       .nav {
         display: flex;
         align-items: center;
@@ -1016,6 +1048,7 @@ function buildPlaywrightReportHtml(): string {
             <span>
               <span class="brand-title">Automate Test Pilot AI</span>
               <span class="brand-subtitle">Playwright execution report</span>
+              <span class="version-badge">v${appVersion}</span>
             </span>
           </a>
           <nav class="nav" aria-label="Report navigation">
@@ -1072,7 +1105,6 @@ function buildStaticCommandCenterHtml(): string {
         margin: 0 auto;
         padding: 24px 0 44px;
       }
-      .topbar,
       .controls,
       .panel-head {
         display: flex;
@@ -1080,10 +1112,27 @@ function buildStaticCommandCenterHtml(): string {
         justify-content: space-between;
         gap: 14px;
       }
+      .topbar {
+        position: sticky;
+        top: 10px;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto minmax(170px, 1fr);
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 22px;
+        padding: 10px;
+        border: 1px solid rgba(215, 221, 229, 0.82);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 8px 24px rgba(16, 20, 24, 0.06);
+        backdrop-filter: blur(14px);
+      }
       .brand {
         display: flex;
         align-items: center;
         gap: 12px;
+        min-width: 0;
       }
       .mark {
         display: grid;
@@ -1096,9 +1145,69 @@ function buildStaticCommandCenterHtml(): string {
         color: var(--accent-strong);
         font-weight: 850;
       }
+      .brand-title {
+        font-size: 16px;
+        font-weight: 850;
+        line-height: 1.2;
+      }
+      .brand-subtitle {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .version-badge {
+        display: inline-flex;
+        align-items: center;
+        width: max-content;
+        min-height: 22px;
+        margin-top: 4px;
+        padding: 0 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface-alt);
+        color: var(--accent-strong);
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .site-nav {
+        display: contents;
+      }
+      .nav-links,
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .nav-links {
+        justify-content: center;
+      }
+      .nav-controls {
+        justify-content: flex-end;
+      }
+      .nav-link {
+        justify-content: center;
+        min-height: 38px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      .nav-link.active {
+        border-color: rgba(15, 118, 110, 0.35);
+        background: var(--surface-alt);
+        color: var(--accent-strong);
+      }
+      .nav-link:hover {
+        border-color: rgba(15, 118, 110, 0.45);
+        color: var(--accent-strong);
+      }
       a,
       button,
-      input {
+      input,
+      select {
         min-height: 40px;
         border-radius: 8px;
         font: inherit;
@@ -1131,6 +1240,10 @@ function buildStaticCommandCenterHtml(): string {
         border-color: rgba(180, 35, 24, 0.28);
         background: var(--surface);
         color: var(--danger);
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.62;
       }
       h1 {
         margin: 28px 0 8px;
@@ -1176,6 +1289,7 @@ function buildStaticCommandCenterHtml(): string {
         font-size: 18px;
       }
       .form,
+      .command-list,
       .target-list {
         display: grid;
         gap: 10px;
@@ -1192,12 +1306,58 @@ function buildStaticCommandCenterHtml(): string {
         font-size: 13px;
         font-weight: 750;
       }
-      input {
+      input,
+      select {
         width: 100%;
         border: 1px solid var(--line);
         background: var(--surface);
         color: var(--text);
         padding: 8px 10px;
+      }
+      input[type="checkbox"] {
+        width: auto;
+        min-height: auto;
+        margin-right: 8px;
+      }
+      .command-card {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .command-card strong {
+        line-height: 1.25;
+      }
+      .command-card span {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .status {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--accent-strong);
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .output {
+        min-height: 240px;
+        margin: 0;
+        overflow: auto;
+        background: #0f172a;
+        color: #e2e8f0;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+        line-height: 1.55;
+        padding: 16px;
+        white-space: pre-wrap;
       }
       .target-card {
         display: grid;
@@ -1227,11 +1387,28 @@ function buildStaticCommandCenterHtml(): string {
         .two-col {
           grid-template-columns: 1fr;
         }
-        .topbar,
         .controls,
         .panel-head {
           align-items: stretch;
           flex-direction: column;
+        }
+        .topbar {
+          position: static;
+          grid-template-columns: 1fr;
+          align-items: stretch;
+        }
+        .site-nav,
+        .nav-links,
+        .nav-controls {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+        .nav-links {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .nav-link {
+          min-width: 0;
+          white-space: normal;
         }
         a,
         button {
@@ -1250,21 +1427,85 @@ function buildStaticCommandCenterHtml(): string {
         <div class="brand">
           <div class="mark">TP</div>
           <div>
-            <strong>Automate Test Pilot AI</strong>
-            <p>Command Center</p>
+            <div class="brand-title">Automate Test Pilot AI</div>
+            <div class="brand-subtitle">Command Center</div>
+            <div class="version-badge">v${appVersion}</div>
           </div>
         </div>
-        <div class="controls">
-          <a href="./index.html">Dashboard</a>
-          <a href="http://127.0.0.1:4174" target="_blank" rel="noreferrer">Open Local Runner</a>
-        </div>
+        <nav class="site-nav" aria-label="Main navigation">
+          <div class="nav-links">
+            <a class="nav-link" href="./index.html">Dashboard</a>
+            <a class="nav-link" href="./manual-test-cases.html">Test Cases</a>
+            <a class="nav-link" href="./playwright.html">Playwright Report</a>
+            <a class="nav-link active" href="./command-center.html">Command Center</a>
+          </div>
+          <div class="nav-controls">
+            <a class="nav-link" href="http://127.0.0.1:4174" target="_blank" rel="noreferrer">Open Local Runner</a>
+          </div>
+        </nav>
       </header>
 
-      <h1>Target Config</h1>
-      <p>Add, edit, and delete UAT or internal web URLs from this browser.</p>
+      <h1>Command Center</h1>
+      <p>Review automation commands, prepare run options, and manage UAT or internal web URLs from this browser.</p>
       <div class="notice">Static mode: this page stores targets in browser localStorage only. To run npm commands or save config/local-projects.json, start <code>npm run ui:local</code> and open the Local Runner.</div>
 
       <section class="layout">
+        <aside class="panel">
+          <div class="panel-head">
+            <h2 class="panel-title">Commands</h2>
+          </div>
+          <div id="commandList" class="command-list"></div>
+        </aside>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2 class="panel-title">Run Options</h2>
+            <span id="status" class="status">Preview only</span>
+          </div>
+          <div class="form">
+            <label>
+              Command
+              <select id="command"></select>
+            </label>
+            <div class="two-col">
+              <label>
+                Project
+                <select id="project"></select>
+              </label>
+              <label>
+                Browser
+                <select id="browser">
+                  <option value="">All configured browsers</option>
+                  <option value="chromium">Chromium</option>
+                  <option value="firefox">Firefox</option>
+                  <option value="webkit">WebKit</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              BASE_URL override
+              <input id="baseUrl" placeholder="http://localhost:3002">
+            </label>
+            <label>
+              <span><input id="testOnly" type="checkbox"> Use --test-only for project pipeline</span>
+            </label>
+            <div class="controls">
+              <button id="runButton" type="button" disabled>Run Command</button>
+              <a href="http://127.0.0.1:4174" target="_blank" rel="noreferrer">Open Local Runner</a>
+            </div>
+          </div>
+          <pre id="output" class="output">Static GitHub Pages mode.
+
+This page can preview commands and run options, but it cannot execute npm scripts.
+
+To run automation:
+1. Run npm run ui:local
+2. Open http://127.0.0.1:4174
+3. Use the same command and options there</pre>
+        </section>
+      </section>
+
+      <section class="layout" aria-label="Target configuration">
         <section class="panel">
           <div class="panel-head">
             <h2 class="panel-title">Edit Target</h2>
@@ -1314,6 +1555,15 @@ function buildStaticCommandCenterHtml(): string {
     </main>
     <script>
       const storageKey = 'automate-test-pilot-ai.static-targets';
+      const commandList = document.querySelector('#commandList');
+      const commandSelect = document.querySelector('#command');
+      const projectSelect = document.querySelector('#project');
+      const browserSelect = document.querySelector('#browser');
+      const baseUrlInput = document.querySelector('#baseUrl');
+      const testOnlyInput = document.querySelector('#testOnly');
+      const runButton = document.querySelector('#runButton');
+      const output = document.querySelector('#output');
+      const statusBadge = document.querySelector('#status');
       const targetList = document.querySelector('#targetList');
       const targetIdInput = document.querySelector('#targetId');
       const targetNameInput = document.querySelector('#targetName');
@@ -1324,9 +1574,18 @@ function buildStaticCommandCenterHtml(): string {
       const saveTargetButton = document.querySelector('#saveTargetButton');
       const newTargetButton = document.querySelector('#newTargetButton');
       const exportButton = document.querySelector('#exportButton');
-      const defaultTargets = ${JSON.stringify(targetProjects)};
+      const fallbackCommands = ${JSON.stringify(commandDefinitions.map(({ id, label, description, allowOptions }) => ({ id, label, description, allowOptions })))};
+      let commands = fallbackCommands;
+      let defaultTargets = ${JSON.stringify(targetProjects)};
+      let apiLocalTargets = [];
+      let localMode = false;
+      let pollTimer;
 
       function loadTargets() {
+        if (localMode) {
+          return apiLocalTargets;
+        }
+
         try {
           return JSON.parse(localStorage.getItem(storageKey) || '[]');
         } catch {
@@ -1335,8 +1594,60 @@ function buildStaticCommandCenterHtml(): string {
       }
 
       function saveTargets(targets) {
+        if (localMode) {
+          apiLocalTargets = targets;
+          renderTargets();
+          renderRunOptions();
+          return;
+        }
+
         localStorage.setItem(storageKey, JSON.stringify(targets));
         renderTargets();
+        renderRunOptions();
+      }
+
+      function getAllTargets() {
+        return [
+          ...defaultTargets.map((target) => ({ ...target, source: 'Default' })),
+          ...loadTargets().map((target) => ({ ...target, source: 'Local' }))
+        ];
+      }
+
+      function renderCommands() {
+        commandSelect.innerHTML = commands.map((command) =>
+          '<option value="' + escapeAttribute(command.id) + '">' + escapeHtml(command.label) + '</option>'
+        ).join('');
+
+        commandList.innerHTML = commands.map((command) =>
+          '<article class="command-card">' +
+            '<strong>' + escapeHtml(command.label) + '</strong>' +
+            '<span>' + escapeHtml(command.description) + '</span>' +
+          '</article>'
+        ).join('');
+      }
+
+      function renderRunOptions() {
+        const currentValue = projectSelect.value;
+        const targets = getAllTargets();
+
+        projectSelect.innerHTML = targets.map((target) =>
+          '<option value="' + escapeAttribute(target.id) + '" data-url="' + escapeAttribute(target.defaultBaseUrl) + '">' +
+            escapeHtml(target.name) + ' (' + escapeHtml(target.source) + ')' +
+          '</option>'
+        ).join('');
+
+        if (currentValue && targets.some((target) => target.id === currentValue)) {
+          projectSelect.value = currentValue;
+        }
+
+        syncProjectUrl();
+      }
+
+      function syncProjectUrl() {
+        const selected = projectSelect.selectedOptions[0];
+        if (selected && !baseUrlInput.value) {
+          baseUrlInput.placeholder = selected.dataset.url || '';
+        }
       }
 
       function normalizeTarget() {
@@ -1376,6 +1687,15 @@ function buildStaticCommandCenterHtml(): string {
       function saveTarget() {
         try {
           const target = normalizeTarget();
+
+          if (localMode) {
+            saveApiTarget(target).catch((error) => {
+              output.textContent = error.message;
+              setStatus('failed');
+            });
+            return;
+          }
+
           saveTargets([...loadTargets().filter((item) => item.id !== target.id), target]);
           clearForm();
         } catch (error) {
@@ -1409,9 +1729,133 @@ function buildStaticCommandCenterHtml(): string {
 
       window.deleteTarget = function deleteTarget(id) {
         if (!confirm('Delete this target?')) return;
+
+        if (localMode) {
+          deleteApiTarget(id).catch((error) => {
+            output.textContent = error.message;
+            setStatus('failed');
+          });
+          return;
+        }
+
         saveTargets(loadTargets().filter((target) => target.id !== id));
         clearForm();
       };
+
+      async function connectLocalRunner() {
+        try {
+          const [commandsResponse, targetsResponse] = await Promise.all([
+            fetch('/api/commands'),
+            fetch('/api/targets')
+          ]);
+
+          if (!commandsResponse.ok || !targetsResponse.ok) {
+            throw new Error('Local runner API is not available.');
+          }
+
+          const commandsData = await commandsResponse.json();
+          const targetsData = await targetsResponse.json();
+          localMode = true;
+          commands = commandsData.commands || fallbackCommands;
+          defaultTargets = targetsData.defaultTargets || defaultTargets;
+          apiLocalTargets = targetsData.localTargets || [];
+          runButton.disabled = false;
+          output.textContent = 'Local runner connected. Select a command and click Run Command.';
+          setStatus('Idle');
+          renderCommands();
+          renderRunOptions();
+          renderTargets();
+        } catch {
+          localMode = false;
+          runButton.disabled = true;
+          setStatus('Preview only');
+        }
+      }
+
+      async function saveApiTarget(target) {
+        const response = await fetch('/api/targets', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(target)
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to save target.');
+        }
+
+        apiLocalTargets = data.localTargets || [];
+        clearForm();
+        setStatus('saved');
+        renderTargets();
+        renderRunOptions();
+      }
+
+      async function deleteApiTarget(id) {
+        const response = await fetch('/api/targets/' + encodeURIComponent(id), { method: 'DELETE' });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to delete target.');
+        }
+
+        apiLocalTargets = data.localTargets || [];
+        clearForm();
+        setStatus('saved');
+        renderTargets();
+        renderRunOptions();
+      }
+
+      function setStatus(status) {
+        statusBadge.textContent = status;
+        statusBadge.classList.toggle('failed', status === 'failed');
+      }
+
+      async function runCommand() {
+        if (!localMode) {
+          return;
+        }
+
+        setStatus('running');
+        runButton.disabled = true;
+        output.textContent = 'Starting command...\\n';
+        const response = await fetch('/api/run', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            commandId: commandSelect.value,
+            projectId: projectSelect.value,
+            baseUrl: baseUrlInput.value.trim(),
+            browser: browserSelect.value,
+            testOnly: testOnlyInput.checked
+          })
+        });
+        const run = await response.json();
+
+        if (!response.ok) {
+          output.textContent = run.error || 'Unable to start command.';
+          setStatus('failed');
+          runButton.disabled = false;
+          return;
+        }
+
+        pollRun(run.id);
+      }
+
+      async function pollRun(id) {
+        clearTimeout(pollTimer);
+        const response = await fetch('/api/runs/' + id);
+        const run = await response.json();
+        output.textContent = run.output || '';
+        setStatus(run.status);
+
+        if (run.status === 'running') {
+          pollTimer = setTimeout(() => pollRun(id), 1200);
+          return;
+        }
+
+        runButton.disabled = false;
+      }
 
       function exportTargets() {
         const content = JSON.stringify(loadTargets(), null, 2) + '\\n';
@@ -1461,7 +1905,15 @@ function buildStaticCommandCenterHtml(): string {
       saveTargetButton.addEventListener('click', saveTarget);
       newTargetButton.addEventListener('click', clearForm);
       exportButton.addEventListener('click', exportTargets);
+      runButton.addEventListener('click', runCommand);
+      projectSelect.addEventListener('change', () => {
+        baseUrlInput.value = '';
+        syncProjectUrl();
+      });
+      renderCommands();
+      renderRunOptions();
       renderTargets();
+      connectLocalRunner();
     </script>
   </body>
 </html>
