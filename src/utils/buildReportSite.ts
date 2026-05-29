@@ -548,6 +548,7 @@ function buildIndexHtml(): string {
             <a class="nav-link active" href="./index.html" data-i18n="navDashboard">Dashboard</a>
             <a class="nav-link" href="./manual-test-cases.html" data-i18n="navManual">Test Cases</a>
             <a class="nav-link" href="./playwright.html" data-i18n="navReport">Playwright Report</a>
+            <a class="nav-link" href="http://127.0.0.1:4174" target="_blank" rel="noreferrer" data-i18n="navCommandCenter">Command Center</a>
           </div>
           <div class="nav-controls" aria-label="Display preferences">
             <button class="nav-button icon-button" type="button" data-lang-toggle aria-label="Current language: English" title="English">🇺🇸</button>
@@ -564,6 +565,7 @@ function buildIndexHtml(): string {
             <a class="button" href="./playwright.html" data-i18n="openReport">Open Playwright Report</a>
             <a class="button secondary" href="./ai-failure-analysis.md" data-i18n="readAnalysis">Read AI Analysis</a>
             <a class="button secondary" href="./manual-test-cases.html" data-i18n="createManual">Open Test Cases</a>
+            <a class="button secondary" href="http://127.0.0.1:4174" target="_blank" rel="noreferrer" data-i18n="openCommandCenter">Open Command Center</a>
           </div>
         </div>
         <aside class="status-panel" aria-label="Latest run status">
@@ -624,6 +626,14 @@ function buildIndexHtml(): string {
               <p data-i18n="manualUiText">Create, import, export, and review manual cases before merging them into generated specs.</p>
             </div>
             <span class="card-cta" data-i18n="createCases">Create cases</span>
+          </a>
+          <a class="card" href="http://127.0.0.1:4174" target="_blank" rel="noreferrer">
+            <div>
+              <div class="card-kicker">Local Runner</div>
+              <strong class="card-title" data-i18n="commandCenter">Command Center</strong>
+              <p data-i18n="commandCenterText">Run npm scripts, view live output, and manage local UAT target URLs from your machine.</p>
+            </div>
+            <span class="card-cta" data-i18n="openLocalUi">Open local UI</span>
           </a>
         </div>
       </section>
@@ -700,11 +710,13 @@ function buildIndexHtml(): string {
           navDashboard: 'Dashboard',
           navManual: 'Test Cases',
           navReport: 'Playwright Report',
+          navCommandCenter: 'Command Center',
           heroTitle: 'Automation reports for AI-generated Playwright testing',
           heroText: 'A portfolio-ready test automation dashboard that connects requirements, generated test cases, Playwright execution, visual checks, and AI failure analysis in one deployable report site.',
           openReport: 'Open Playwright Report',
           readAnalysis: 'Read AI Analysis',
           createManual: 'Open Test Cases',
+          openCommandCenter: 'Open Command Center',
           latestRun: 'Latest Run',
           readyReview: 'Ready for Review',
           statusDetail: 'Generated reports are available from the latest local or CI workflow run.',
@@ -725,6 +737,9 @@ function buildIndexHtml(): string {
           manualUi: 'Manual Test Case UI',
           manualUiText: 'Create, import, export, and review manual cases before merging them into generated specs.',
           createCases: 'Create cases',
+          commandCenter: 'Command Center',
+          commandCenterText: 'Run npm scripts, view live output, and manage local UAT target URLs from your machine.',
+          openLocalUi: 'Open local UI',
           pipelineTitle: 'Automation Pipeline',
           pipelineNote: 'The workflow turns product requirements into executable tests and reviewable reports.',
           stepRequirements: 'Requirements',
@@ -749,11 +764,13 @@ function buildIndexHtml(): string {
           navDashboard: 'หน้าหลัก',
           navManual: 'เทสเคส',
           navReport: 'รายงาน Playwright',
+          navCommandCenter: 'Command Center',
           heroTitle: 'แดชบอร์ดรายงานสำหรับ Playwright testing ที่ใช้ AI',
           heroText: 'แดชบอร์ด automation สำหรับ portfolio ที่เชื่อม requirement, test cases, Playwright execution, visual checks และ AI failure analysis ไว้ในที่เดียว',
           openReport: 'เปิด Playwright Report',
           readAnalysis: 'อ่าน AI Analysis',
           createManual: 'เปิดเทสเคส',
+          openCommandCenter: 'เปิด Command Center',
           latestRun: 'ผลรันล่าสุด',
           readyReview: 'พร้อมตรวจสอบ',
           statusDetail: 'รายงานถูกสร้างจาก local หรือ CI workflow ล่าสุด',
@@ -774,6 +791,9 @@ function buildIndexHtml(): string {
           manualUi: 'หน้าแก้ไขเทสเคส',
           manualUiText: 'สร้าง import export และตรวจ manual cases ก่อน merge เข้า generated specs',
           createCases: 'สร้างเทสเคส',
+          commandCenter: 'Command Center',
+          commandCenterText: 'รัน npm scripts, ดู output สด และจัดการ UAT target URLs บนเครื่องคุณ',
+          openLocalUi: 'เปิด local UI',
           pipelineTitle: 'Automation Pipeline',
           pipelineNote: 'Workflow เปลี่ยน product requirements ให้เป็น executable tests และ reviewable reports',
           stepRequirements: 'Requirements',
