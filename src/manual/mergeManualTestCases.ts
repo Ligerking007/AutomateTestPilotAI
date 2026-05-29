@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { TestCase } from '../types/testCase.js';
 import { readJsonFile, writeJsonFile } from '../utils/fileHelper.js';
 
@@ -33,7 +34,7 @@ async function readOptionalCases(filePath: string): Promise<TestCase[]> {
   }
 }
 
-function validateCases(cases: TestCase[], filePath: string): TestCase[] {
+export function validateCases(cases: TestCase[], filePath: string): TestCase[] {
   if (!Array.isArray(cases)) {
     throw new Error(`${filePath} must contain a JSON array.`);
   }
@@ -47,7 +48,7 @@ function validateCases(cases: TestCase[], filePath: string): TestCase[] {
   return cases;
 }
 
-function mergeById(generatedCases: TestCase[], manualCases: TestCase[]): TestCase[] {
+export function mergeById(generatedCases: TestCase[], manualCases: TestCase[]): TestCase[] {
   const caseMap = new Map<string, TestCase>();
 
   for (const testCase of generatedCases) {
@@ -64,7 +65,9 @@ function mergeById(generatedCases: TestCase[], manualCases: TestCase[]): TestCas
   return Array.from(caseMap.values());
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

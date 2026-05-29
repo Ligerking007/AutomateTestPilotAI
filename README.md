@@ -90,6 +90,7 @@ AutomateTestPilotAI/
 │  ├─ types/
 │  └─ utils/
 ├─ tests/
+│  ├─ unit/
 │  ├─ generated/
 │  └─ visual/
 ├─ reports/
@@ -145,6 +146,7 @@ If no OpenAI or Azure OpenAI credentials are present, the framework uses mock AI
 ```bash
 npm run ai:generate-cases
 npm run ai:generate-specs
+npm run test:unit
 npm test
 npm run ai:analyze-failure
 npm run report:site
@@ -169,6 +171,23 @@ When no AI key is available, it falls back to a deterministic generator so the p
 `src/ai/analyzeFailure.ts` reads the Playwright JSON report, detects failed tests, collects error details and artifacts, sends the failure summary to AI, and writes `reports/ai-failure-analysis.md`.
 
 The report includes Summary, Root Cause, Failed Step, Possible Fix, Affected File, Risk Level, and Recommended Next Action.
+
+## Unit Tests
+
+Unit tests use the Node.js built-in test runner with `tsx`, so no extra test framework is required.
+
+```bash
+npm run test:unit
+```
+
+Current unit coverage focuses on the project logic that should stay stable:
+
+- AI spec prompt building, markdown fence cleanup, fallback spec generation, and blocked hard-coded sleeps
+- Manual test case merge and validation rules
+- Target project lookup and unknown project errors
+- File helper behavior for JSON/text writes, markdown discovery, and optional copy operations
+
+CI runs unit tests after TypeScript checking and before generating AI test cases or running Playwright browser tests.
 
 ## Manual Test Cases
 
@@ -206,6 +225,7 @@ npm run test:ui
 npm run test:headed
 npm run test:report
 npm run test:visual
+npm run test:unit
 npm run check
 ```
 
@@ -254,12 +274,13 @@ The CI workflow runs on push and pull request:
 1. Install dependencies
 2. Install Playwright browsers
 3. Type check
-4. Generate test cases
-5. Generate Playwright specs
-6. Run Playwright tests
-7. Run AI failure analysis even when tests fail
-8. Build the static report site
-9. Upload reports as artifacts
+4. Run unit tests
+5. Generate test cases
+6. Generate Playwright specs
+7. Run Playwright tests
+8. Run AI failure analysis even when tests fail
+9. Build the static report site
+10. Upload reports as artifacts
 
 ## GitHub Pages
 

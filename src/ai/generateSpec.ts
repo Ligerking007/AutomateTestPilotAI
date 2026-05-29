@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { runAiPrompt } from './openAiClient.js';
 import type { TestCase } from '../types/testCase.js';
 import { readJsonFile, writeTextFile } from '../utils/fileHelper.js';
@@ -22,7 +23,7 @@ async function main(): Promise<void> {
   console.log(`Generated ${testCases.length} Playwright test(s) at ${outputFile}`);
 }
 
-function buildPrompt(testCases: TestCase[]): string {
+export function buildPrompt(testCases: TestCase[]): string {
   return `
 Generate a complete Playwright TypeScript spec file from these test cases.
 
@@ -43,9 +44,10 @@ ${JSON.stringify(testCases, null, 2)}
 `.trim();
 }
 
-function sanitizeAiSpec(raw: string): string {
+export function sanitizeAiSpec(raw: string): string {
   // Strip markdown fences because LLMs may still return them even when the prompt says code only.
   const cleaned = raw
+    .trim()
     .replace(/^```(?:ts|typescript)?\s*/i, '')
     .replace(/```$/i, '')
     .trim();
@@ -61,7 +63,7 @@ function sanitizeAiSpec(raw: string): string {
   return `${cleaned}\n`;
 }
 
-function buildFallbackSpec(testCases: TestCase[]): string {
+export function buildFallbackSpec(testCases: TestCase[]): string {
   console.log('No AI API key found. Using deterministic Playwright spec generator for local demo.');
   // The fallback keeps the portfolio demo runnable without requiring an OpenAI key.
   const tests = testCases.map(buildTestBlock).join('\n\n');
@@ -74,7 +76,7 @@ ${tests}
 `;
 }
 
-function buildTestBlock(testCase: TestCase): string {
+export function buildTestBlock(testCase: TestCase): string {
   const title = escapeForSingleQuote(`${testCase.id} ${testCase.title}`);
   const tags = testCase.tags.map((tag) => `@${tag}`).join(' ');
 
@@ -88,11 +90,13 @@ function buildTestBlock(testCase: TestCase): string {
   });`;
 }
 
-function escapeForSingleQuote(value: string): string {
+export function escapeForSingleQuote(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

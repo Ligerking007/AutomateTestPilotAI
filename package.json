@@ -13,6 +13,7 @@
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:report": "playwright show-report",
+    "test:unit": "node --import tsx --test tests/unit/*.test.ts",
     "test:project": "tsx src/cli/runProject.ts",
     "test:portfolio": "tsx src/cli/runProject.ts portfolio",
     "test:devpilot": "tsx src/cli/runProject.ts devpilotai",
