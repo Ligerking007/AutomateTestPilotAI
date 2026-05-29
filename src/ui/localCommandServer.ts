@@ -1,7 +1,9 @@
 import { spawn } from 'node:child_process';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import path from 'node:path';
-import { targetProjects } from '../config/projects.js';
+import { getAllTargetProjects, targetProjects } from '../config/projects.js';
+import type { TargetProject } from '../types/testCase.js';
 
 const host = '127.0.0.1';
 const port = Number(process.env.COMMAND_CENTER_PORT || 4174);
@@ -21,6 +23,15 @@ interface RunRequest {
   baseUrl?: string;
   browser?: string;
   testOnly?: boolean;
+}
+
+interface LocalTargetRequest {
+  id: string;
+  name: string;
+  defaultBaseUrl: string;
+  localPath?: string;
+  description?: string;
+  tags?: string[];
 }
 
 interface CommandRun {
@@ -94,6 +105,7 @@ export const commandDefinitions: CommandDefinition[] = [
 
 const runs = new Map<string, CommandRun>();
 let activeChild: ReturnType<typeof spawn> | undefined;
+const localProjectsFile = path.resolve('config/local-projects.json');
 
 function main(): void {
   const server = createServer(async (request, response) => {
@@ -118,10 +130,42 @@ async function route(request: IncomingMessage, response: ServerResponse): Promis
   }
 
   if (request.method === 'GET' && url.pathname === '/api/commands') {
+    const projects = getAllTargetProjects();
     sendJson(response, 200, {
       commands: commandDefinitions.map(({ id, label, description, allowOptions }) => ({ id, label, description, allowOptions })),
-      projects: targetProjects.map(({ id, name, defaultBaseUrl }) => ({ id, name, defaultBaseUrl }))
+      projects: projects.map(({ id, name, defaultBaseUrl }) => ({ id, name, defaultBaseUrl }))
     });
+    return;
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/targets') {
+    sendJson(response, 200, {
+      defaultTargets: targetProjects,
+      localTargets: await readLocalTargets()
+    });
+    return;
+  }
+
+  if (request.method === 'POST' && url.pathname === '/api/targets') {
+    const body = await readJsonBody<LocalTargetRequest>(request);
+    const target = normalizeLocalTarget(body);
+    const targets = await readLocalTargets();
+
+    if (targetProjects.some((project) => project.id === target.id)) {
+      sendJson(response, 409, { error: 'Default targets cannot be overwritten from the local UI.' });
+      return;
+    }
+
+    await writeLocalTargets([...targets.filter((project) => project.id !== target.id), target]);
+    sendJson(response, 200, { localTargets: await readLocalTargets() });
+    return;
+  }
+
+  if (request.method === 'DELETE' && url.pathname.startsWith('/api/targets/')) {
+    const id = decodeURIComponent(url.pathname.split('/').at(-1) || '');
+    const targets = await readLocalTargets();
+    await writeLocalTargets(targets.filter((project) => project.id !== id));
+    sendJson(response, 200, { localTargets: await readLocalTargets() });
     return;
   }
 
@@ -181,6 +225,7 @@ export function buildCommand(request: RunRequest): { command: string; args: stri
 
   if (request.projectId) {
     env.TARGET_PROJECT = request.projectId;
+    env.BASE_URL = request.baseUrl || getAllTargetProjects().find((project) => project.id === request.projectId)?.defaultBaseUrl || env.BASE_URL;
   }
 
   if (extraArgs.length > 0) {
@@ -188,6 +233,62 @@ export function buildCommand(request: RunRequest): { command: string; args: stri
   }
 
   return { command: 'npm', args, env };
+}
+
+export function normalizeLocalTarget(request: LocalTargetRequest): TargetProject {
+  const id = request.id.trim().toLowerCase();
+  const name = request.name.trim();
+  const defaultBaseUrl = request.defaultBaseUrl.trim();
+
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(id)) {
+    throw new Error('Target ID must use lowercase letters, numbers, and hyphens only.');
+  }
+
+  if (!name) {
+    throw new Error('Target name is required.');
+  }
+
+  try {
+    new URL(defaultBaseUrl);
+  } catch {
+    throw new Error('Base URL must be a valid URL.');
+  }
+
+  return {
+    id,
+    name,
+    defaultBaseUrl,
+    localPath: request.localPath?.trim() || '',
+    description: request.description?.trim() || 'Local UAT target.',
+    tags: normalizeTags(request.tags)
+  };
+}
+
+async function readLocalTargets(): Promise<TargetProject[]> {
+  try {
+    const raw = await readFile(localProjectsFile, 'utf8');
+    const targets = JSON.parse(raw) as LocalTargetRequest[];
+    return Array.isArray(targets) ? targets.map((target) => normalizeLocalTarget(target)) : [];
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return [];
+    }
+
+    throw error;
+  }
+}
+
+async function writeLocalTargets(targets: TargetProject[]): Promise<void> {
+  await mkdir(path.dirname(localProjectsFile), { recursive: true });
+  await writeFile(localProjectsFile, `${JSON.stringify(targets, null, 2)}\n`, 'utf8');
+}
+
+function normalizeTags(tags?: string[]): string[] {
+  const normalized = (tags || ['local', 'uat'])
+    .map((tag) => tag.trim().toLowerCase())
+    .filter(Boolean);
+
+  return Array.from(new Set(normalized.length > 0 ? normalized : ['local', 'uat']));
 }
 
 function startCommand(request: RunRequest): CommandRun {
@@ -412,6 +513,32 @@ function buildPageHtml(): string {
         font-size: 13px;
         line-height: 1.45;
       }
+      .target-list {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+      }
+      .target-card {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .target-card strong,
+      .target-card code {
+        overflow-wrap: anywhere;
+      }
+      .target-card code {
+        color: var(--accent-strong);
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+      }
+      .target-meta {
+        color: var(--muted);
+        font-size: 12px;
+      }
       label {
         display: grid;
         gap: 6px;
@@ -550,6 +677,54 @@ function buildPageHtml(): string {
           <pre id="output" class="output">Select a command and click Run Command.</pre>
         </section>
       </section>
+
+      <section class="layout" aria-label="Target configuration">
+        <section class="panel">
+          <div class="panel-head run-head">
+            <h2 class="panel-title">Target Config</h2>
+            <span class="status">Local only</span>
+          </div>
+          <div class="form">
+            <div class="two-col">
+              <label>
+                Target ID
+                <input id="targetId" placeholder="myapp-uat">
+              </label>
+              <label>
+                Name
+                <input id="targetName" placeholder="My App UAT">
+              </label>
+            </div>
+            <label>
+              Base URL
+              <input id="targetBaseUrl" placeholder="https://uat.example.com">
+            </label>
+            <label>
+              Local Path
+              <input id="targetLocalPath" placeholder="/Users/jakapank/SourceCode/MyApp">
+            </label>
+            <label>
+              Tags
+              <input id="targetTags" placeholder="uat, smoke, regression">
+            </label>
+            <label>
+              Description
+              <input id="targetDescription" placeholder="Company UAT environment">
+            </label>
+            <div class="controls">
+              <button id="saveTargetButton" type="button">Save Target</button>
+              <button id="newTargetButton" class="secondary" type="button">New Target</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2 class="panel-title">Saved Targets</h2>
+          </div>
+          <div id="targetList" class="target-list"></div>
+        </section>
+      </section>
     </main>
     <script>
       const commandSelect = document.querySelector('#command');
@@ -562,17 +737,37 @@ function buildPageHtml(): string {
       const output = document.querySelector('#output');
       const statusBadge = document.querySelector('#status');
       const commandList = document.querySelector('#commandList');
+      const targetList = document.querySelector('#targetList');
+      const targetIdInput = document.querySelector('#targetId');
+      const targetNameInput = document.querySelector('#targetName');
+      const targetBaseUrlInput = document.querySelector('#targetBaseUrl');
+      const targetLocalPathInput = document.querySelector('#targetLocalPath');
+      const targetTagsInput = document.querySelector('#targetTags');
+      const targetDescriptionInput = document.querySelector('#targetDescription');
+      const saveTargetButton = document.querySelector('#saveTargetButton');
+      const newTargetButton = document.querySelector('#newTargetButton');
       let commands = [];
+      let localTargets = [];
+      let defaultTargets = [];
       let pollTimer;
 
       async function loadCommands() {
         const response = await fetch('/api/commands');
         const data = await response.json();
         commands = data.commands;
-        commandSelect.innerHTML = commands.map((command) => '<option value="' + command.id + '">' + command.label + '</option>').join('');
-        projectSelect.innerHTML = data.projects.map((project) => '<option value="' + project.id + '" data-url="' + project.defaultBaseUrl + '">' + project.name + '</option>').join('');
-        commandList.innerHTML = commands.map((command) => '<article class="command-card"><strong>' + command.label + '</strong><span>' + command.description + '</span></article>').join('');
+        commandSelect.innerHTML = commands.map((command) => '<option value="' + escapeAttribute(command.id) + '">' + escapeHtml(command.label) + '</option>').join('');
+        projectSelect.innerHTML = data.projects.map((project) => '<option value="' + escapeAttribute(project.id) + '" data-url="' + escapeAttribute(project.defaultBaseUrl) + '">' + escapeHtml(project.name) + '</option>').join('');
+        commandList.innerHTML = commands.map((command) => '<article class="command-card"><strong>' + escapeHtml(command.label) + '</strong><span>' + escapeHtml(command.description) + '</span></article>').join('');
         syncProjectUrl();
+      }
+
+      async function loadTargets() {
+        const response = await fetch('/api/targets');
+        const data = await response.json();
+        defaultTargets = data.defaultTargets || [];
+        localTargets = data.localTargets || [];
+        renderTargets();
+        await loadCommands();
       }
 
       function syncProjectUrl() {
@@ -586,6 +781,92 @@ function buildPageHtml(): string {
         statusBadge.textContent = status;
         statusBadge.classList.toggle('failed', status === 'failed');
         runButton.disabled = status === 'running';
+      }
+
+      function renderTargets() {
+        const targetCards = [
+          ...defaultTargets.map((target) => ({ ...target, source: 'Default' })),
+          ...localTargets.map((target) => ({ ...target, source: 'Local' }))
+        ];
+
+        targetList.innerHTML = targetCards.map((target) => {
+          const canDelete = target.source === 'Local';
+          return '<article class="target-card">' +
+            '<div class="target-meta">' + escapeHtml(target.source) + ' / ' + escapeHtml(target.id) + '</div>' +
+            '<strong>' + escapeHtml(target.name) + '</strong>' +
+            '<code>' + escapeHtml(target.defaultBaseUrl) + '</code>' +
+            '<span class="target-meta">' + escapeHtml((target.tags || []).join(', ')) + '</span>' +
+            '<div class="controls">' +
+              '<button class="secondary" type="button" onclick="editTarget(\\'' + escapeAttribute(target.id) + '\\')">Edit</button>' +
+              (canDelete ? '<button class="secondary" type="button" onclick="deleteTarget(\\'' + escapeAttribute(target.id) + '\\')">Delete</button>' : '') +
+            '</div>' +
+          '</article>';
+        }).join('');
+      }
+
+      function clearTargetForm() {
+        targetIdInput.disabled = false;
+        targetIdInput.value = '';
+        targetNameInput.value = '';
+        targetBaseUrlInput.value = '';
+        targetLocalPathInput.value = '';
+        targetTagsInput.value = '';
+        targetDescriptionInput.value = '';
+      }
+
+      function findTarget(id) {
+        return [...defaultTargets, ...localTargets].find((target) => target.id === id);
+      }
+
+      window.editTarget = function editTarget(id) {
+        const target = findTarget(id);
+        if (!target) return;
+        targetIdInput.value = target.id;
+        targetIdInput.disabled = defaultTargets.some((item) => item.id === id);
+        targetNameInput.value = target.name;
+        targetBaseUrlInput.value = target.defaultBaseUrl;
+        targetLocalPathInput.value = target.localPath || '';
+        targetTagsInput.value = (target.tags || []).join(', ');
+        targetDescriptionInput.value = target.description || '';
+      };
+
+      window.deleteTarget = async function deleteTarget(id) {
+        if (!confirm('Delete this local target?')) return;
+        const response = await fetch('/api/targets/' + encodeURIComponent(id), { method: 'DELETE' });
+        const data = await response.json();
+        if (!response.ok) {
+          output.textContent = data.error || 'Unable to delete target.';
+          setStatus('failed');
+          return;
+        }
+        clearTargetForm();
+        await loadTargets();
+      };
+
+      async function saveTarget() {
+        const response = await fetch('/api/targets', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            id: targetIdInput.value,
+            name: targetNameInput.value,
+            defaultBaseUrl: targetBaseUrlInput.value,
+            localPath: targetLocalPathInput.value,
+            description: targetDescriptionInput.value,
+            tags: targetTagsInput.value.split(',').map((tag) => tag.trim()).filter(Boolean)
+          })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          output.textContent = data.error || 'Unable to save target.';
+          setStatus('failed');
+          return;
+        }
+
+        clearTargetForm();
+        setStatus('saved');
+        await loadTargets();
       }
 
       async function runCommand() {
@@ -628,11 +909,26 @@ function buildPageHtml(): string {
 
       projectSelect.addEventListener('change', syncProjectUrl);
       runButton.addEventListener('click', runCommand);
+      saveTargetButton.addEventListener('click', saveTarget);
+      newTargetButton.addEventListener('click', clearTargetForm);
       clearButton.addEventListener('click', () => {
         output.textContent = '';
       });
 
-      loadCommands().catch((error) => {
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value).replaceAll(String.fromCharCode(96), '&#096;');
+      }
+
+      loadTargets().catch((error) => {
         output.textContent = error.message;
         setStatus('failed');
       });

@@ -187,6 +187,7 @@ Current unit coverage focuses on the project logic that should stay stable:
 - Manual test case merge and validation rules
 - Target project lookup and unknown project errors
 - File helper behavior for JSON/text writes, markdown discovery, and optional copy operations
+- Local Command Center command whitelist and editable target normalization
 
 CI runs unit tests after TypeScript checking and before generating AI test cases or running Playwright browser tests.
 
@@ -217,6 +218,29 @@ The command center runs on your machine, not on GitHub Pages. It intentionally u
 - Run the full target project pipeline
 
 Use the Project, Browser, BASE_URL, and `--test-only` controls to run the same workflow you would normally run from the terminal.
+
+### Target Config UI
+
+The Local Command Center also includes a Target Config section for UAT or internal web apps you want to automate.
+
+You can add, edit, and delete local targets from the browser:
+
+- Target ID, such as `myapp-uat`
+- Name, such as `My App UAT`
+- Base URL, such as `https://uat.example.com`
+- Local path, if the project exists on your machine
+- Tags, such as `uat`, `smoke`, `regression`
+- Description
+
+Local targets are saved to:
+
+```text
+config/local-projects.json
+```
+
+That file is ignored by Git so internal UAT URLs do not get committed to GitHub. The command center combines default targets from `src/config/projects.ts` with local targets from `config/local-projects.json`, so saved UAT targets immediately appear in the Project dropdown.
+
+For public or portfolio-safe targets, keep them in `src/config/projects.ts`. For private company UAT URLs, use the local Target Config UI.
 
 ## Manual Test Cases
 

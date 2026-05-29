@@ -20,6 +20,6 @@ test('getTargetProject returns a known target by id', () => {
 test('getTargetProject rejects unknown targets with valid options', () => {
   assert.throws(
     () => getTargetProject('unknown-project'),
-    /Valid values: devpilotai, codereviewpilotai, portfolio/
+    /Valid values: .*devpilotai.*codereviewpilotai.*portfolio/
   );
 });
